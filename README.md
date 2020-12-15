@@ -102,7 +102,7 @@ $checkout->getCart();
 $checkout->getCartBuilder();
 ```
 
-Adding, updating or removing cart items.
+Adding, updating or removing cart items:
 
 ```php
 // Add 1 qty of product and return the CartItem model
@@ -115,7 +115,7 @@ $checkout->updateItem($item->id, 2);
 $checkout->removeItem($item->id);
 ```
 
-Getting the checkout subtotal, taxes and total.
+Getting the checkout subtotal, taxes and total:
 
 ```php
 $checkout->getSubtotal(); // 100
