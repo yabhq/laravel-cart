@@ -1,3 +1,4 @@
 /vendor/
 .phpunit.result.cache
 build/report.junit.xml
+.vscode/
