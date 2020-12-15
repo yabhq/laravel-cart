@@ -18,10 +18,10 @@ class ShoppingCartServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/database/migrations' => database_path('migrations'),
+                __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'migrations');
             $this->publishes([
-                __DIR__.'/routes' => base_path('routes'),
+                __DIR__.'/../routes' => base_path('routes'),
             ], 'routes');
             $this->publishes([
                 __DIR__.'/Logistics' => app_path('Logistics'),
