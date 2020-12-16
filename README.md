@@ -30,6 +30,7 @@ Full list of published files:
 * database/migrations/2020_12_13_000002_create_cart_items_table
 * routes/checkout.php
 * app/Logistics/CartLogistics.php
+* app/Logistics/TaxLogistics.php
 
 ### Usage
 
