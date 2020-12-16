@@ -15,7 +15,7 @@ trait Purchaseable
     }
 
     /**
-     * Undocumented function
+     * Determine the underlying type of this purchaseable type.
      *
      * @return string
      */
@@ -29,7 +29,7 @@ trait Purchaseable
     }
 
     /**
-     * Undocumented function
+     * Get the retail price of this purchaseable item.
      *
      * @return float
      */
