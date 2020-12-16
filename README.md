@@ -72,7 +72,7 @@ Not every e-commerce store is the same. This package provides several "logistics
 
 **app/Logistics/TaxLogistics.php**
 ```php
-public static function getTaxRate(mixed $purchaseable, array $address) : int
+public static function getTaxRate(mixed $purchaseable, CartItem $item) : int
 ```
 
 ### The Checkout Class
