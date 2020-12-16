@@ -5,7 +5,7 @@ namespace Yab\ShoppingCart\Tests\Logistics;
 use Yab\ShoppingCart\Models\CartItem;
 use Yab\ShoppingCart\Contracts\TaxLogistics as TaxLogisticsInterface;
 
-class TaxLogisticsTest implements TaxLogisticsInterface
+class TaxLogistics implements TaxLogisticsInterface
 {
     /**
      * Get the tax rate for the purchaseable and specific cart item.

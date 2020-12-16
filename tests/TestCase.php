@@ -5,8 +5,8 @@ namespace Yab\ShoppingCart\Tests;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Yab\ShoppingCart\Tests\Logistics\TaxLogisticsTest;
-use Yab\ShoppingCart\Tests\Logistics\CartLogisticsTest;
+use Yab\ShoppingCart\Tests\Logistics\TaxLogistics as TaxLogisticsTest;
+use Yab\ShoppingCart\Tests\Logistics\CartLogistics as CartLogisticsTest;
 
 abstract class TestCase extends OrchestraTestCase
 {
