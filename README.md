@@ -69,7 +69,7 @@ DELETE /checkouts/{checkout}/items/{item}
 
 Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax rate is determined:
 
-**app/Logistics/CartLogistics.php**
+**app/Logistics/TaxLogistics.php**
 ```php
 public static function getTaxRate(mixed $purchaseable, array $address) : int
 ```

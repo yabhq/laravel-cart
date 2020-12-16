@@ -19,17 +19,4 @@ class CartLogisticsTest implements CartLogisticsInterface
     {
         return Product::findOrFail($id);
     }
-    
-    /**
-     * Get the tax rate for the purchaseable item given the shipping address.
-     *
-     * @param mixed $purchaseable
-     * @param array $address
-     *
-     * @return int
-     */
-    public static function getTaxRate(mixed $purchaseable, array $address) : int
-    {
-        return 18;
-    }
 }

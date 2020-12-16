@@ -3,7 +3,7 @@
 namespace Yab\ShoppingCart\Models;
 
 use Yab\Mint\Casts\Money;
-use App\Logistics\CartLogistics;
+use App\Logistics\TaxLogistics;
 use Yab\ShoppingCart\Models\Cart;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -90,9 +90,9 @@ class CartItem extends Model
      */
     public function getTaxes() : float
     {
-        $multiplier = app(CartLogistics::class)->getTaxRate(
+        $multiplier = app(TaxLogistics::class)->getTaxRate(
             $this->purchaseable,
-            $this->cart->shipping_address
+            $this
         ) * 0.01;
 
         return $this->price * $multiplier;

@@ -2,8 +2,10 @@
 
 namespace Yab\ShoppingCart\Tests;
 
+use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Yab\ShoppingCart\Tests\Logistics\TaxLogisticsTest;
 use Yab\ShoppingCart\Tests\Logistics\CartLogisticsTest;
 
 abstract class TestCase extends OrchestraTestCase
@@ -23,6 +25,7 @@ abstract class TestCase extends OrchestraTestCase
         $this->withFactories(__DIR__ . '/Factories');
 
         app()->bind(CartLogistics::class, CartLogisticsTest::class);
+        app()->bind(TaxLogistics::class, TaxLogisticsTest::class);
     }
 
     /**
