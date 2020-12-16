@@ -16,6 +16,6 @@ class CartLogistics implements CartLogisticsInterface
      */
     public static function getPurchaseable(string $type, mixed $id) : mixed
     {
-        // return Product::findOrFail($id);
+        return $type::findOrFail($id);
     }
 }
