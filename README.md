@@ -1,5 +1,5 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/yabhq/laravel-cart.svg?style=flat-square)](https://packagist.org/packages/yabhq/laravel-cart)
-[![CircleCI](https://img.shields.io/circleci/project/github/yabhq/laravel-cart/master.svg)](https://circleci.com/gh/yabhq/laravel-cart)
+[![CircleCI](https://circleci.com/gh/yabhq/laravel-cart.svg?style=svg)](https://circleci.com/gh/yabhq/laravel-cart)
 
 # Laravel Shopping Cart API
 
