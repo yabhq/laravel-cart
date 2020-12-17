@@ -50,9 +50,9 @@ class CheckoutTest extends TestCase
         $response->assertSuccessful();
 
         $response->assertJson([
-            'subtotal' => 9.95,
-            'taxes' => 1.79,
-            'total' => 11.74,
+            'subtotal' => 14.95,
+            'taxes' => 2.69,
+            'total' => 17.64,
             'cart' => [
                 'id' => $item->cart->id,
                 'items' => [

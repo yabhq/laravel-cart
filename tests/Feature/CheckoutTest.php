@@ -187,6 +187,21 @@ class CheckoutTest extends TestCase
     }
 
     /** @test */
+    public function the_cart_shipping_costs_can_be_retrieved()
+    {
+        $productOne = factory(Product::class)->create([
+            'price' => 100,
+        ]);
+
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->addItem($productOne, 1);
+
+        $this->assertEquals(5, $checkout->getShipping());
+    }
+
+    /** @test */
     public function the_cart_subtotal_can_be_retrieved()
     {
         $productOne = factory(Product::class)->create([
@@ -202,7 +217,8 @@ class CheckoutTest extends TestCase
         $checkout->addItem($productOne, 1);
         $checkout->addItem($productTwo, 2);
 
-        $this->assertEquals(100, $checkout->getSubtotal());
+        // $100 (item cost) + 2 x $5 (shipping)
+        $this->assertEquals(110, $checkout->getSubtotal());
     }
 
     /** @test */
@@ -217,7 +233,9 @@ class CheckoutTest extends TestCase
 
         $checkout->addItem($productOne, 1);
 
-        $this->assertEquals(18, $checkout->getTaxes());
+        // $100 (item cost) + $5 (shipping) = $105
+        // $105 x 0.18 = $18.90
+        $this->assertEquals(18.90, $checkout->getTaxes());
     }
 
     /** @test */
@@ -232,7 +250,9 @@ class CheckoutTest extends TestCase
 
         $checkout->addItem($productOne, 1);
 
-        // $100 + $18 per taxes in CartLogisticsTest class
-        $this->assertEquals(118, $checkout->getTotal());
+        // $100 (item cost) + $5 (shipping cost) = $105
+        // $105 x 0.18 = $18.90
+        // $105 + $18.90 = $123.90
+        $this->assertEquals(123.90, $checkout->getTotal());
     }
 }
