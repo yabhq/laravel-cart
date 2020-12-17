@@ -125,9 +125,10 @@ $checkout->removeItem($item->id);
 Getting the checkout subtotal, taxes and total:
 
 ```php
-$checkout->getSubtotal(); // 100
-$checkout->getTaxes(); // 13
-$checkout->getTotal(); // 113
+$checkout->getShipping(); // 5.00
+$checkout->getSubtotal(); // 100.00
+$checkout->getTaxes(); // 13.00
+$checkout->getTotal(); // 113.00
 ```
 
 ## License
