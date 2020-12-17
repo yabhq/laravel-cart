@@ -27,6 +27,7 @@ class CheckoutItemCreateRequest extends APIRequest
             'purchaseable_type' => 'required',
             'purchaseable_id' => 'required',
             'qty' => 'required|integer',
+            'options' => 'sometimes|nullable|array',
         ];
     }
 }

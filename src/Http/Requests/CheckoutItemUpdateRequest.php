@@ -25,6 +25,7 @@ class CheckoutItemUpdateRequest extends APIRequest
     {
         return [
             'qty' => 'required|integer',
+            'options' => 'sometimes|nullable|array',
         ];
     }
 }
