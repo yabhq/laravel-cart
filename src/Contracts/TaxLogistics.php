@@ -2,9 +2,9 @@
 
 namespace Yab\ShoppingCart\Contracts;
 
-use Yab\ShoppingCart\Models\CartItem;
+use Yab\ShoppingCart\Models\Cart;
 
 interface TaxLogistics
 {
-    public static function getTaxRate(mixed $purchaseable, CartItem $item) : int;
+    public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float;
 }

@@ -2,8 +2,10 @@
 
 namespace Yab\ShoppingCart;
 
+use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;
+use App\Logistics\ShippingLogistics;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
 use Yab\ShoppingCart\Events\CartItemAdded;
@@ -146,33 +148,41 @@ class Checkout
     }
 
     /**
-     * Get the subtotal for the current cart contents.
+     * Get the shipping cost for the checkout.
+     *
+     * @return float
+     */
+    public function getShipping() : float
+    {
+        return round(app(ShippingLogistics::class)->getShippingCost($this->getCart()), 2);
+    }
+
+    /**
+     * Get the subtotal for the checkout.
      *
      * @return float
      */
     public function getSubtotal() : float
     {
-        return round($this->cart->items->sum('price'), 2);
+        return round($this->cart->items->sum('price') + $this->getShipping(), 2);
     }
 
     /**
-     * Get the taxes for the current cart contents.
+     * Get the taxes for the checkout.
      *
      * @return float
      */
     public function getTaxes() : float
     {
-        $taxes = 0;
-
-        $this->cart->items->each(function ($item) use (&$taxes) {
-            $taxes += $item->getTaxes();
-        });
-
-        return round($taxes, 2);
+        return round(app(TaxLogistics::class)->getTaxes(
+            $this->getSubtotal(),
+            $this->getShipping(),
+            $this->getCart()
+        ), 2);
     }
 
     /**
-     * Get the total for the current cart contents.
+     * Get the total for the checkout.
      *
      * @return float
      */
