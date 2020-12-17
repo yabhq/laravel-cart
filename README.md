@@ -119,7 +119,11 @@ $item = $checkout->addItem($product, 1);
 $item = $checkout->addItem($product, 1, 11.95);
 
 // Add custom options to a checkout item
-$item = $checkout->addItem($product, 1, null, [ 'size' => 'medium' ]);
+$item = $checkout->addItem(
+    purchaseable: $product,
+    qty: 1,
+    options: [ 'size' => 'medium' ],
+);
 
 // Update the quantity of the item to 2
 $checkout->updateItem($item->id, 2);
