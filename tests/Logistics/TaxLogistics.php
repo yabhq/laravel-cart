@@ -8,7 +8,7 @@ use Yab\ShoppingCart\Contracts\TaxLogistics as TaxLogisticsInterface;
 class TaxLogistics implements TaxLogisticsInterface
 {
     /**
-     * Get the tax rate given the subtotal (including shipping), shipping
+     * Get the taxes given the subtotal (including shipping), shipping
      * costs and cart instance.
      *
      * @param float $subtotal
