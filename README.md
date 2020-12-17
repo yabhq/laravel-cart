@@ -30,6 +30,7 @@ Full list of published files:
 * database/migrations/2020_12_13_000002_create_cart_items_table
 * routes/checkout.php
 * app/Logistics/CartLogistics.php
+* app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
 
 ### Usage
@@ -68,7 +69,7 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 ```
 
-Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax rate is determined:
+Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax & shipping costs are determined:
 
 **app/Logistics/TaxLogistics.php**
 ```php
