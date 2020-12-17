@@ -5,7 +5,7 @@ namespace Yab\ShoppingCart\Tests\Logistics;
 use Yab\ShoppingCart\Tests\Models\Product;
 use Yab\ShoppingCart\Contracts\CartLogistics as CartLogisticsInterface;
 
-class CartLogisticsTest implements CartLogisticsInterface
+class CartLogistics implements CartLogisticsInterface
 {
     /**
      * Get the purchaseable entity given the type and ID.
