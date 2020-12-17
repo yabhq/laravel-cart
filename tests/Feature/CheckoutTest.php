@@ -92,12 +92,54 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 995,
             'price' => 995,
         ]);
 
         Event::assertDispatched(function (CartItemAdded $event) use ($item) {
             return $event->item->id === $item->id;
         });
+    }
+
+    /** @test */
+    public function a_product_retail_price_can_be_manually_overriden()
+    {
+        $checkout = Checkout::create();
+
+        $product = factory(Product::class)->create([
+            'price' => 9.95,
+        ]);
+
+        $item = $checkout->addItem($product, 1, 13.95);
+
+        $this->assertDatabaseHas('cart_items', [
+            'id' => $item->id,
+            'cart_id' => $checkout->getCart()->id,
+            'purchaseable_id' => $product->id,
+            'purchaseable_type' => $product->getMorphClass(),
+            'qty' => 1,
+            'unit_price' => 1395,
+            'price' => 1395,
+        ]);
+    }
+
+    /** @test */
+    public function custom_options_can_be_added_to_a_checkout_item()
+    {
+        $checkout = Checkout::create();
+
+        $product = factory(Product::class)->create();
+
+        $item = $checkout->addItem($product, 1, null, [ 'size' => 'medium' ]);
+
+        $this->assertDatabaseHas('cart_items', [
+            'id' => $item->id,
+            'cart_id' => $checkout->getCart()->id,
+            'purchaseable_id' => $product->id,
+            'purchaseable_type' => $product->getMorphClass(),
+            'qty' => 1,
+            'custom_fields' => json_encode([ 'options' => [ 'size' => 'medium' ]]),
+        ]);
     }
 
     /** @test */
@@ -138,6 +180,7 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 995,
             'price' => 995,
         ]);
 
@@ -153,6 +196,7 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 2,
+            'unit_price' => 995,
             'price' => 1990,
         ]);
 

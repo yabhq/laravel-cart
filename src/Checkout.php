@@ -97,15 +97,17 @@ class Checkout
      *
      * @param mixed $purchaseable
      * @param int $qty
+     * @param float $price - optional
+     * @param array $options - optional
      *
      * @return \Yab\ShoppingCart\Models\CartItem
      */
-    public function addItem(mixed $purchaseable, int $qty) : CartItem
+    public function addItem(mixed $purchaseable, int $qty, ?float $price = null, ?array $options = []) : CartItem
     {
         $this->abortIfNotPurchaseable($purchaseable);
 
         $item = $this->cart->getItem($purchaseable);
-        $item->setQty($qty)->calculatePrice()->save();
+        $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();
         
         event(new CartItemAdded($item));
 
@@ -117,13 +119,15 @@ class Checkout
      *
      * @param int $cartItemId
      * @param int $qty
+     * @param float $price - optional
+     * @param array $options - optional
      *
      * @return \Yab\ShoppingCart\Models\CartItem
      */
-    public function updateItem(int $cartItemId, int $qty) : CartItem
+    public function updateItem(int $cartItemId, int $qty, ?float $price = null, ?array $options = []) : CartItem
     {
         $item = CartItem::findOrFail($cartItemId);
-        $item->setQty($qty)->calculatePrice()->save();
+        $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();
         
         event(new CartItemUpdated($item));
 

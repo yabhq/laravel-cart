@@ -22,7 +22,7 @@ class CartItem extends Model
         'purchaseable_id',
         'purchaseable_type',
         'qty',
-        'configuration',
+        'custom_fields',
     ];
 
     /**
@@ -32,8 +32,9 @@ class CartItem extends Model
      */
     protected $casts = [
         'qty' => 'integer',
+        'unit_price' => Money::class,
         'price' => Money::class,
-        'configuration' => 'array',
+        'custom_fields' => 'array',
     ];
 
     /**
@@ -57,7 +58,7 @@ class CartItem extends Model
     }
 
     /**
-     * Increment the quantity for this item.
+     * Set the quantity for this item.
      *
      * @param integer $qty
      *
@@ -71,13 +72,37 @@ class CartItem extends Model
     }
 
     /**
-     * Calculate the price for this line item based on the quantity.
+     * Set the custom options for this item
+     *
+     * @param array $options
      *
      * @return \Yab\ShoppingCart\Models\CartItem
      */
-    public function calculatePrice() : CartItem
+    public function setOptions(array $options) : CartItem
     {
-        $this->price = $this->purchaseable->getRetailPrice() * $this->qty;
+        $custom = $this->custom_fields;
+        $custom['options'] = $options;
+
+        $this->custom_fields = $custom;
+
+        return $this;
+    }
+
+    /**
+     * Calculate the price for this line item based on the quantity.
+     *
+     * @param float|null $unitPrice
+     *
+     * @return \Yab\ShoppingCart\Models\CartItem
+     */
+    public function calculatePrice(float|null $unitPrice = null) : CartItem
+    {
+        if (is_null($unitPrice)) {
+            $unitPrice = $this->purchaseable->getRetailPrice();
+        }
+        
+        $this->unit_price = $unitPrice;
+        $this->price = $unitPrice * $this->qty;
 
         return $this;
     }

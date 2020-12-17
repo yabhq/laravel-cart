@@ -39,7 +39,9 @@ class Cart extends Model
      * @var array
      */
     protected $fillable = [
+        'customer_info',
         'shipping_address',
+        'billing_address',
     ];
 
     /**
@@ -57,7 +59,9 @@ class Cart extends Model
      * @var array
      */
     protected $casts = [
+        'customer_info' => 'array',
         'shipping_address' => 'array',
+        'billing_address' => 'array',
     ];
 
     /**

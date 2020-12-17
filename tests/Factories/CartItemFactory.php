@@ -17,6 +17,7 @@ $factory->define(CartItem::class, function () {
         'purchaseable_id' => $product->id,
         'purchaseable_type' => $product->getMorphClass(),
         'qty' => 1,
+        'unit_price' => 9.95,
         'price' => 9.95,
     ];
 });

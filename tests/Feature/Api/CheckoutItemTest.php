@@ -35,6 +35,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 1495,
             'price' => 1495,
         ]);
     }
@@ -60,6 +61,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 2495,
             'price' => 2495,
         ]);
 
@@ -75,6 +77,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 2,
+            'unit_price' => 2495,
             'price' => 4990,
         ]);
     }

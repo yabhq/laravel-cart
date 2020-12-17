@@ -115,6 +115,12 @@ Adding, updating or removing cart items:
 // Add 1 qty of product and return the CartItem model
 $item = $checkout->addItem($product, 1);
 
+// Override the default unit price for the product
+$item = $checkout->addItem($product, 1, 11.95);
+
+// Add custom options to a checkout item
+$item = $checkout->addItem($product, 1, null, [ 'size' => 'medium' ]);
+
 // Update the quantity of the item to 2
 $checkout->updateItem($item->id, 2);
 

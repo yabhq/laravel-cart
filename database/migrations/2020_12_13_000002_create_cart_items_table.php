@@ -19,7 +19,9 @@ class CreateCartItemsTable extends Migration
             $table->foreign('cart_id')->references('id')->on('carts');
             $table->morphs('purchaseable');
             $table->integer('qty')->default(1);
-            $table->integer('price')->default(0);
+            $table->integer('unit_price');
+            $table->integer('price');
+            $table->json('custom_fields')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
