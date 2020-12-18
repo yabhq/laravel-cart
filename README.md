@@ -79,7 +79,7 @@ public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : 
 
 **app/Logistics/ShippingLogistics.php**
 ```php
-public static function getShippingCost(Cart $cart) : float;
+public static function getShippingCost(Cart $cart) : float
 ```
 
 ### The Checkout Class
