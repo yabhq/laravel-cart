@@ -4,7 +4,7 @@ namespace Yab\ShoppingCart\Http\Requests;
 
 use Yab\ShoppingCart\Http\Requests\APIRequest;
 
-class CheckoutItemUpdateRequest extends APIRequest
+class CheckoutUpdateRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class CheckoutItemUpdateRequest extends APIRequest
     public function rules()
     {
         return [
-            'qty' => 'required|integer',
-            'options' => 'sometimes|nullable|array',
+            'customer_info' => 'sometimes|array',
+            'shipping_address' => 'sometimes|array',
+            'billing_address' => 'sometimes|array',
         ];
     }
 }

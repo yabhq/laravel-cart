@@ -15,7 +15,6 @@ class CheckoutItemTest extends TestCase
     /** @test */
     public function a_new_cart_item_can_be_created_via_the_api()
     {
-        $this->withoutExceptionHandling();
         $product = factory(Product::class)->create([
             'price' => 14.95,
         ]);
@@ -26,6 +25,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'options' => [ 'color' => 'green' ],
         ]);
     
         $response->assertSuccessful();
@@ -35,7 +35,9 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 1495,
             'price' => 1495,
+            'custom_fields' => json_encode([ 'options' => [ 'color' => 'green' ]], )
         ]);
     }
 
@@ -60,6 +62,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 2495,
             'price' => 2495,
         ]);
 
@@ -75,6 +78,7 @@ class CheckoutItemTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 2,
+            'unit_price' => 2495,
             'price' => 4990,
         ]);
     }

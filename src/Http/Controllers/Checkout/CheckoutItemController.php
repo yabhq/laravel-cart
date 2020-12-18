@@ -27,7 +27,11 @@ class CheckoutItemController extends Controller
             $request->purchaseable_id,
         );
 
-        return $checkout->addItem($purchaseable, $request->qty);
+        return $checkout->addItem(
+            purchaseable: $purchaseable,
+            qty: $request->qty,
+            options: $request->options ?? [],
+        );
     }
 
     /**
@@ -43,7 +47,11 @@ class CheckoutItemController extends Controller
     {
         $checkout = Checkout::findById($checkoutId);
 
-        return $checkout->updateItem($itemId, $request->qty);
+        return $checkout->updateItem(
+            cartItemId: $itemId,
+            qty: $request->qty,
+            options: $request->options ?? [],
+        );
     }
 
     /**

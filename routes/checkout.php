@@ -8,6 +8,7 @@ Route::group([
 ], function () {
     Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('checkout/{checkout}', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::put('checkout/{checkout}', [CheckoutController::class, 'update'])->name('checkout.update');
     Route::delete('checkout/{checkout}', [CheckoutController::class, 'destroy'])->name('checkout.destroy');
 
     Route::post('checkout/{checkout}/items', [CheckoutItemController::class, 'store'])->name('checkout.items.store');

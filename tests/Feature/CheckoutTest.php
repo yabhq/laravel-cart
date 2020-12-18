@@ -92,12 +92,54 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 995,
             'price' => 995,
         ]);
 
         Event::assertDispatched(function (CartItemAdded $event) use ($item) {
             return $event->item->id === $item->id;
         });
+    }
+
+    /** @test */
+    public function a_product_retail_price_can_be_manually_overriden()
+    {
+        $checkout = Checkout::create();
+
+        $product = factory(Product::class)->create([
+            'price' => 9.95,
+        ]);
+
+        $item = $checkout->addItem($product, 1, 13.95);
+
+        $this->assertDatabaseHas('cart_items', [
+            'id' => $item->id,
+            'cart_id' => $checkout->getCart()->id,
+            'purchaseable_id' => $product->id,
+            'purchaseable_type' => $product->getMorphClass(),
+            'qty' => 1,
+            'unit_price' => 1395,
+            'price' => 1395,
+        ]);
+    }
+
+    /** @test */
+    public function custom_options_can_be_added_to_a_checkout_item()
+    {
+        $checkout = Checkout::create();
+
+        $product = factory(Product::class)->create();
+
+        $item = $checkout->addItem($product, 1, null, [ 'size' => 'medium' ]);
+
+        $this->assertDatabaseHas('cart_items', [
+            'id' => $item->id,
+            'cart_id' => $checkout->getCart()->id,
+            'purchaseable_id' => $product->id,
+            'purchaseable_type' => $product->getMorphClass(),
+            'qty' => 1,
+            'custom_fields' => json_encode([ 'options' => [ 'size' => 'medium' ]]),
+        ]);
     }
 
     /** @test */
@@ -138,6 +180,7 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
+            'unit_price' => 995,
             'price' => 995,
         ]);
 
@@ -153,6 +196,7 @@ class CheckoutTest extends TestCase
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 2,
+            'unit_price' => 995,
             'price' => 1990,
         ]);
 
@@ -187,6 +231,21 @@ class CheckoutTest extends TestCase
     }
 
     /** @test */
+    public function the_cart_shipping_costs_can_be_retrieved()
+    {
+        $productOne = factory(Product::class)->create([
+            'price' => 100,
+        ]);
+
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->addItem($productOne, 1);
+
+        $this->assertEquals(5, $checkout->getShipping());
+    }
+
+    /** @test */
     public function the_cart_subtotal_can_be_retrieved()
     {
         $productOne = factory(Product::class)->create([
@@ -202,7 +261,8 @@ class CheckoutTest extends TestCase
         $checkout->addItem($productOne, 1);
         $checkout->addItem($productTwo, 2);
 
-        $this->assertEquals(100, $checkout->getSubtotal());
+        // $100 (item cost) + 2 x $5 (shipping)
+        $this->assertEquals(110, $checkout->getSubtotal());
     }
 
     /** @test */
@@ -217,7 +277,9 @@ class CheckoutTest extends TestCase
 
         $checkout->addItem($productOne, 1);
 
-        $this->assertEquals(18, $checkout->getTaxes());
+        // $100 (item cost) + $5 (shipping) = $105
+        // $105 x 0.18 = $18.90
+        $this->assertEquals(18.90, $checkout->getTaxes());
     }
 
     /** @test */
@@ -232,7 +294,9 @@ class CheckoutTest extends TestCase
 
         $checkout->addItem($productOne, 1);
 
-        // $100 + $18 per taxes in CartLogisticsTest class
-        $this->assertEquals(118, $checkout->getTotal());
+        // $100 (item cost) + $5 (shipping cost) = $105
+        // $105 x 0.18 = $18.90
+        // $105 + $18.90 = $123.90
+        $this->assertEquals(123.90, $checkout->getTotal());
     }
 }

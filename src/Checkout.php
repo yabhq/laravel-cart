@@ -97,15 +97,17 @@ class Checkout
      *
      * @param mixed $purchaseable
      * @param int $qty
+     * @param float $price - optional
+     * @param array $options - optional
      *
      * @return \Yab\ShoppingCart\Models\CartItem
      */
-    public function addItem(mixed $purchaseable, int $qty) : CartItem
+    public function addItem(mixed $purchaseable, int $qty, ?float $price = null, ?array $options = []) : CartItem
     {
         $this->abortIfNotPurchaseable($purchaseable);
 
         $item = $this->cart->getItem($purchaseable);
-        $item->setQty($qty)->calculatePrice()->save();
+        $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();
         
         event(new CartItemAdded($item));
 
@@ -117,13 +119,15 @@ class Checkout
      *
      * @param int $cartItemId
      * @param int $qty
+     * @param float $price - optional
+     * @param array $options - optional
      *
      * @return \Yab\ShoppingCart\Models\CartItem
      */
-    public function updateItem(int $cartItemId, int $qty) : CartItem
+    public function updateItem(int $cartItemId, int $qty, ?float $price = null, ?array $options = []) : CartItem
     {
         $item = CartItem::findOrFail($cartItemId);
-        $item->setQty($qty)->calculatePrice()->save();
+        $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();
         
         event(new CartItemUpdated($item));
 
@@ -145,6 +149,33 @@ class Checkout
         event(new CartItemDeleted($item));
 
         return $item;
+    }
+
+    /**
+     * Set a custom field value for this cart.
+     *
+     * @param string $key
+     * @param array $payload
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function setCustomField(string $key, array $payload) : Checkout
+    {
+        $this->cart->setCustomField($key, $payload);
+
+        return $this;
+    }
+
+    /**
+     * Get the custom field value for the specified key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getCustomField(string $key) : mixed
+    {
+        return $this->cart->custom_fields[$key];
     }
 
     /**

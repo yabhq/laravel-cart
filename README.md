@@ -30,6 +30,7 @@ Full list of published files:
 * database/migrations/2020_12_13_000002_create_cart_items_table
 * routes/checkout.php
 * app/Logistics/CartLogistics.php
+* app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
 
 ### Usage
@@ -61,6 +62,7 @@ This will add the following routes:
 ```
 POST /checkouts
 GET /checkouts/{checkout}
+PUT /checkouts/{checkout}
 DELETE /checkouts/{checkout}
 
 POST /checkouts/{checkout}/items
@@ -68,7 +70,7 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 ```
 
-Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax rate is determined:
+Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax & shipping costs are determined:
 
 **app/Logistics/TaxLogistics.php**
 ```php
@@ -90,6 +92,12 @@ Creating or retrieving a checkout instance:
 $checkout = Checkout::create();
 // or
 $checkout = Checkout::findById('uuid-123');
+```
+
+Adding a custom field for a checkout:
+
+```php
+$checkout->setCustomField('some key', 'some value');
 ```
 
 Deleting a checkout:
@@ -114,6 +122,16 @@ Adding, updating or removing cart items:
 // Add 1 qty of product and return the CartItem model
 $item = $checkout->addItem($product, 1);
 
+// Override the default unit price for the product
+$item = $checkout->addItem($product, 1, 11.95);
+
+// Add custom options to a checkout item
+$item = $checkout->addItem(
+    purchaseable: $product,
+    qty: 1,
+    options: [ 'size' => 'medium' ],
+);
+
 // Update the quantity of the item to 2
 $checkout->updateItem($item->id, 2);
 
@@ -121,12 +139,13 @@ $checkout->updateItem($item->id, 2);
 $checkout->removeItem($item->id);
 ```
 
-Getting the checkout subtotal, taxes and total:
+Getting the shipping, subtotal, taxes and total:
 
 ```php
-$checkout->getSubtotal(); // 100
-$checkout->getTaxes(); // 13
-$checkout->getTotal(); // 113
+$checkout->getShipping(); // 5.00
+$checkout->getSubtotal(); // 100.00
+$checkout->getTaxes(); // 13.00
+$checkout->getTotal(); // 113.00
 ```
 
 ## License
