@@ -34,17 +34,6 @@ class Cart extends Model
     protected $keyType = 'string';
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'customer_info',
-        'shipping_address',
-        'billing_address',
-    ];
-
-    /**
      * The relationships which should be eagerly loaded.
      *
      * @var array
@@ -59,9 +48,7 @@ class Cart extends Model
      * @var array
      */
     protected $casts = [
-        'customer_info' => 'array',
-        'shipping_address' => 'array',
-        'billing_address' => 'array',
+        'custom_fields' => 'array',
     ];
 
     /**
@@ -87,5 +74,24 @@ class Cart extends Model
             'purchaseable_id' => $purchaseable->getIdentifier(),
             'purchaseable_type' => $purchaseable->getType(),
         ]);
+    }
+
+    /**
+     * Set a custom field value for this cart.
+     *
+     * @param string $key
+     * @param array $payload
+     *
+     * @return \Yab\ShoppingCart\Models\Cart
+     */
+    public function setCustomField(string $key, array $payload) : Cart
+    {
+        $custom = $this->custom_fields;
+        $custom[$key] = $payload;
+
+        $this->custom_fields = $custom;
+        $this->save();
+
+        return $this;
     }
 }

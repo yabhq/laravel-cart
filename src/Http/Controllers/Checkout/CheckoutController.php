@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Http\Controllers\Controller;
 use Yab\ShoppingCart\Http\Resources\CheckoutResource;
+use Yab\ShoppingCart\Http\Requests\CheckoutUpdateRequest;
 
 class CheckoutController extends Controller
 {
@@ -35,6 +36,25 @@ class CheckoutController extends Controller
     public function show(Request $request, string $checkoutId)
     {
         $checkout = Checkout::findById($checkoutId);
+
+        return new CheckoutResource($checkout);
+    }
+
+    /**
+     * Update the details for a particular checkout ID.
+     *
+     * @param  \Yab\ShoppingCart\Http\Requests\CheckoutUpdateRequest  $request
+     * @param  string $checkoutId
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(CheckoutUpdateRequest $request, string $checkoutId)
+    {
+        $checkout = Checkout::findById($checkoutId);
+
+        $checkout->setCustomField('customer_info', $request->customer_info ?? []);
+        $checkout->setCustomField('shipping_address', $request->shipping_address ?? []);
+        $checkout->setCustomField('billing_address', $request->billing_address ?? []);
 
         return new CheckoutResource($checkout);
     }

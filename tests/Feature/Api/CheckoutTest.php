@@ -65,6 +65,34 @@ class CheckoutTest extends TestCase
     }
 
     /** @test */
+    public function a_checkout_shipping_address_can_be_updated_via_the_api()
+    {
+        $cart = factory(Cart::class)->create();
+
+        $address = [
+            'street' => '123 Test Street',
+            'city' => 'Toronto',
+            'region' => 'ON',
+            'postal_code' => 'L3L 3L3',
+        ];
+
+        $response = $this->put(route('checkout.update', [ $cart->id ]), [
+            'shipping_address' => $address,
+        ]);
+    
+        $response->assertSuccessful();
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $cart->id,
+            'custom_fields' => json_encode([
+                'customer_info' => [],
+                'shipping_address' => $address,
+                'billing_address' => [],
+            ]),
+        ]);
+    }
+
+    /** @test */
     public function an_existing_checkout_can_be_deleted_via_the_api()
     {
         $cart = factory(Cart::class)->create();

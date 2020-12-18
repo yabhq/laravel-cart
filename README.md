@@ -62,6 +62,7 @@ This will add the following routes:
 ```
 POST /checkouts
 GET /checkouts/{checkout}
+PUT /checkouts/{checkout}
 DELETE /checkouts/{checkout}
 
 POST /checkouts/{checkout}/items
@@ -91,6 +92,12 @@ Creating or retrieving a checkout instance:
 $checkout = Checkout::create();
 // or
 $checkout = Checkout::findById('uuid-123');
+```
+
+Adding a custom field for a checkout:
+
+```php
+$checkout->setCustomField('some key', 'some value');
 ```
 
 Deleting a checkout:
@@ -132,7 +139,7 @@ $checkout->updateItem($item->id, 2);
 $checkout->removeItem($item->id);
 ```
 
-Getting the checkout subtotal, taxes and total:
+Getting the shipping, subtotal, taxes and total:
 
 ```php
 $checkout->getShipping(); // 5.00

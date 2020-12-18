@@ -15,9 +15,7 @@ class CreateCartsTable extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->json('customer_info')->nullable();
-            $table->json('shipping_address')->nullable();
-            $table->json('billing_address')->nullable();
+            $table->json('custom_fields')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

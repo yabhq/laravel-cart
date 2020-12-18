@@ -152,6 +152,33 @@ class Checkout
     }
 
     /**
+     * Set a custom field value for this cart.
+     *
+     * @param string $key
+     * @param array $payload
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function setCustomField(string $key, array $payload) : Checkout
+    {
+        $this->cart->setCustomField($key, $payload);
+
+        return $this;
+    }
+
+    /**
+     * Get the custom field value for the specified key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getCustomField(string $key) : mixed
+    {
+        return $this->cart->custom_fields[$key];
+    }
+
+    /**
      * Get the shipping cost for the checkout.
      *
      * @return float
