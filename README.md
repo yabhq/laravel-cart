@@ -3,7 +3,15 @@
 
 # Laravel Shopping Cart API
 
-A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind.
+A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind. Currently supports payment processing with **Stripe** out of the box.
+
+### Table of Contents
+[Requirements](#requirements)  
+[Installation](#installation)  
+[Configuration](#configuration)  
+[Usage](#usage)  
+[Advanced Usage: Checkout Class](#the-checkout-class)  
+[License](#license)  
 
 ### Requirements
 
@@ -29,6 +37,7 @@ Full list of published files:
 * database/migrations/2020_12_13_000001_create_carts_table
 * database/migrations/2020_12_13_000002_create_cart_items_table
 * routes/checkout.php
+* config/checkout.php
 * app/Logistics/CartLogistics.php
 * app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
@@ -79,7 +88,7 @@ public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : 
 
 **app/Logistics/ShippingLogistics.php**
 ```php
-public static function getShippingCost(Cart $cart) : float;
+public static function getShippingCost(Cart $cart) : float
 ```
 
 ### The Checkout Class
@@ -146,6 +155,12 @@ $checkout->getShipping(); // 5.00
 $checkout->getSubtotal(); // 100.00
 $checkout->getTaxes(); // 13.00
 $checkout->getTotal(); // 113.00
+```
+
+Performing charges (currently supports Stripe):
+
+```php
+$checkout->setPaymentProvider('stripe')->charge([ 'token' => ... ]);
 ```
 
 ## License

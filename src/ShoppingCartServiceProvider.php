@@ -24,6 +24,9 @@ class ShoppingCartServiceProvider extends ServiceProvider
                 __DIR__.'/../routes' => base_path('routes'),
             ], 'routes');
             $this->publishes([
+                __DIR__.'/../config/config.php' => config_path('checkout.php'),
+            ], 'config');
+            $this->publishes([
                 __DIR__.'/Logistics' => app_path('Logistics'),
             ], 'logistics');
         }
