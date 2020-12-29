@@ -18,15 +18,20 @@ class StripePaymentProvider implements PaymentProvider
      */
     public static function charge(Checkout $checkout, array $chargeable) : void
     {
-        \Stripe\Stripe::setApiKey(config('checkout.stripe.secret_key'));
+        $stripe = new \Stripe\StripeClient(
+            config('checkout.stripe.secret_key')
+        );
 
         try {
-            $response = \Stripe\Charge::create([
+            $response = $stripe->charges->create([
                 'amount' => $checkout->getTotal() * 100, // Amount in cents
                 'currency' => config('checkout.currency'),
                 'source' => $chargeable['token'],
                 'capture' => true,
             ]);
+            if ($response->status !== 'succeeded') {
+                throw new PaymentFailedException($e->getMessage());
+            }
             $checkout->getCart()->saveReceipt($checkout, $response->id);
         } catch (\Exception $e) {
             throw new PaymentFailedException($e->getMessage());

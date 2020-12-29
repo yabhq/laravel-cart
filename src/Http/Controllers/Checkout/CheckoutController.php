@@ -51,10 +51,12 @@ class CheckoutController extends Controller
     public function update(CheckoutUpdateRequest $request, string $checkoutId)
     {
         $checkout = Checkout::findById($checkoutId);
-
-        $checkout->setCustomField('customer_info', $request->customer_info ?? []);
-        $checkout->setCustomField('shipping_address', $request->shipping_address ?? []);
-        $checkout->setCustomField('billing_address', $request->billing_address ?? []);
+        
+        if ($request->custom_fields) {
+            foreach ($request->custom_fields as $key => $value) {
+                $checkout->setCustomField($key, $value);
+            }
+        }
 
         return new CheckoutResource($checkout);
     }

@@ -16,6 +16,7 @@ use Yab\ShoppingCart\Contracts\PaymentProvider;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
+use Yab\ShoppingCart\Exceptions\PaymentFailedException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
@@ -280,7 +281,13 @@ class Checkout
             throw new PaymentProviderMissingException;
         }
 
-        $this->paymentProvider->charge($this, $chargeable);
+        try {
+            $this->paymentProvider->charge($this, $chargeable);
+            app(CartLogistics::class)->afterSuccessfulCheckout($this);
+        }
+        catch(PaymentFailedException $e) {
+            app(CartLogistics::class)->afterFailedCheckout($this, $e);
+        }
     }
 
     /**

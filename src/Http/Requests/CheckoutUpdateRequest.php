@@ -24,9 +24,7 @@ class CheckoutUpdateRequest extends APIRequest
     public function rules()
     {
         return [
-            'customer_info' => 'sometimes|array',
-            'shipping_address' => 'sometimes|array',
-            'billing_address' => 'sometimes|array',
+            'custom_fields' => 'sometimes|array',
         ];
     }
 }
