@@ -2,6 +2,7 @@
 
 namespace Yab\ShoppingCart;
 
+use Illuminate\Support\Str;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;
@@ -12,10 +13,23 @@ use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
+use Yab\ShoppingCart\Contracts\PaymentProvider;
+use Yab\ShoppingCart\Payments\LocalPaymentProvider;
+use Yab\ShoppingCart\Payments\FailedPaymentProvider;
+use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
+use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
+use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
 
 class Checkout
 {
+    /**
+     * The payment provider class to use for charges.
+     *
+     * @var mixed
+     */
+    private $paymentProvider;
+
     /**
      * Create a new checkout instance for a cart.
      *
@@ -223,6 +237,54 @@ class Checkout
     }
 
     /**
+     * Set the payment provider for this checkout.
+     *
+     * @param string $provider
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function setPaymentProvider(string $provider) : Checkout
+    {
+        $supported = self::getSupportedPaymentProviders();
+        
+        $class = $supported[$provider] ?? '';
+
+        if(!class_exists($class) || !(new $class instanceof PaymentProvider)) {
+            throw new PaymentProviderInvalidException;
+        }
+
+        $this->paymentProvider = new $class;
+
+        return $this;
+    }
+
+    /**
+     * Get the payment provider for this checkout.
+     *
+     * @return \Yab\ShoppingCart\Contracts\PaymentProvider
+     */
+    public function getPaymentProvider() : PaymentProvider
+    {
+        return $this->paymentProvider;
+    }
+    
+    /**
+     * Perform the actual charge for this checkout.
+     *
+     * @param array $chargeable
+     * 
+     * @return void
+     */
+    public function charge(array $chargeable) : void
+    {
+        if (is_null($this->paymentProvider)) {
+            throw new PaymentProviderMissingException;
+        }
+
+        $this->paymentProvider->charge($this, $chargeable);
+    }
+
+    /**
      * Throw an exception if the payload does not implement the purchaseable
      * interface.
      *
@@ -237,5 +299,19 @@ class Checkout
         if (!($purchaseable instanceof Purchaseable)) {
             throw new ItemNotPurchaseableException;
         }
+    }
+
+    /**
+     * Return a mapping of the supported payment providers.
+     * 
+     * @return array
+     */
+    private static function getSupportedPaymentProviders() : array
+    {
+        return [
+            'local' => LocalPaymentProvider::class,
+            'failed' => FailedPaymentProvider::class,
+            'stripe' => StripePaymentProvider::class,
+        ];
     }
 }

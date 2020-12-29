@@ -14,6 +14,7 @@ use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
+use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
 class CheckoutTest extends TestCase
@@ -298,5 +299,16 @@ class CheckoutTest extends TestCase
         // $105 x 0.18 = $18.90
         // $105 + $18.90 = $123.90
         $this->assertEquals(123.90, $checkout->getTotal());
+    }
+
+    /** @test */
+    public function the_payment_provider_can_be_set_for_the_checkout()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->setPaymentProvider('stripe');
+
+        $this->assertEquals(StripePaymentProvider::class, get_class($checkout->getPaymentProvider()));
     }
 }

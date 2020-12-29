@@ -148,6 +148,12 @@ $checkout->getTaxes(); // 13.00
 $checkout->getTotal(); // 113.00
 ```
 
+Performing charges (currently supports Stripe):
+
+```php
+$checkout->setPaymentProvider('stripe')->charge([ 'token' => ... ]);
+```
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
