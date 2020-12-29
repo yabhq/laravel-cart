@@ -7,6 +7,7 @@ use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Http\Controllers\Controller;
 use Yab\ShoppingCart\Http\Requests\CheckoutItemCreateRequest;
 use Yab\ShoppingCart\Http\Requests\CheckoutItemUpdateRequest;
+use Yab\ShoppingCart\Exceptions\PurchaseableNotFoundException;
 
 class CheckoutItemController extends Controller
 {
@@ -26,6 +27,8 @@ class CheckoutItemController extends Controller
             $request->purchaseable_type,
             $request->purchaseable_id,
         );
+
+        throw_if(!$purchaseable, PurchaseableNotFoundException::class);
 
         return $checkout->addItem(
             purchaseable: $purchaseable,

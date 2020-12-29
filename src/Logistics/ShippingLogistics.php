@@ -2,6 +2,7 @@
 
 namespace App\Logistics;
 
+use Yab\ShoppingCart\Models\Cart;
 use Yab\ShoppingCart\Contracts\ShippingLogistics as ShippingLogisticsInterface;
 
 class ShippingLogistics implements ShippingLogisticsInterface
