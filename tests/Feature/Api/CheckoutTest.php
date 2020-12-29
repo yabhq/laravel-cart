@@ -77,7 +77,11 @@ class CheckoutTest extends TestCase
         ];
 
         $response = $this->put(route('checkout.update', [ $cart->id ]), [
-            'shipping_address' => $address,
+            'custom_fields' => [
+                'customer_info' => [],
+                'shipping_address' => $address,
+                'billing_address' => [],
+            ],
         ]);
     
         $response->assertSuccessful();

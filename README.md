@@ -91,6 +91,13 @@ public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : 
 public static function getShippingCost(Cart $cart) : float
 ```
 
+**app/Logistics/CartLogistics.php**
+```php
+public static function getPurchaseable(string $type, mixed $id) : mixed
+public static function afterSuccessfulCheckout(Checkout $checkout) : void
+public static function afterFailedCheckout(Checkout $checkout, PaymentFailedException $e) : void
+```
+
 ## The Checkout Class
 
 For more advanced usage, the package comes with a *Checkout* class which allows you to interact with the shopping cart directly. This may be useful in case you want to implement your own custom controller logic.
