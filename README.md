@@ -5,7 +5,7 @@
 
 A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind. Currently supports payment processing with **Stripe** out of the box.
 
-### Table of Contents
+## Table of Contents
 [Requirements](#requirements)  
 [Installation](#installation)  
 [Configuration](#configuration)  
@@ -13,18 +13,18 @@ A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoi
 [Advanced Usage: Checkout Class](#the-checkout-class)  
 [License](#license)  
 
-### Requirements
+## Requirements
 
 * PHP 8+
 * Laravel 8.x
 
-### Installation
+## Installation
 
 ```
 composer require yabhq/laravel-cart
 ```
 
-### Configuration
+## Configuration
 
 The package publishes some migrations, routes (for optional use) and classes for further customizing your store logistics. 
 
@@ -42,7 +42,7 @@ Full list of published files:
 * app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
 
-### Usage
+## Usage
 
 First, simply implement the *Purchaseable* interface on your product (or other purchaseable) model.
 
@@ -91,7 +91,7 @@ public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : 
 public static function getShippingCost(Cart $cart) : float
 ```
 
-### The Checkout Class
+## The Checkout Class
 
 For more advanced usage, the package comes with a *Checkout* class which allows you to interact with the shopping cart directly. This may be useful in case you want to implement your own custom controller logic.
 
