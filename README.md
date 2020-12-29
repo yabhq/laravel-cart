@@ -3,7 +3,7 @@
 
 # Laravel Shopping Cart API
 
-A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind. Currently supports payment processing with **Stripe** out of the box.
+A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind. Currently supports payment processing with **Stripe**.
 
 ## Table of Contents
 [Requirements](#requirements)  
