@@ -17,5 +17,6 @@ class LocalPaymentProvider implements PaymentProvider
      */
     public static function charge(Checkout $checkout, array $chargeable) : void
     {
+        $checkout->getCart()->saveReceipt($checkout, 'transaction_123456');
     }
 }

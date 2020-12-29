@@ -21,12 +21,13 @@ class StripePaymentProvider implements PaymentProvider
         \Stripe\Stripe::setApiKey(config('checkout.stripe.secret_key'));
 
         try {
-            \Stripe\Charge::create([
+            $response = \Stripe\Charge::create([
                 'amount' => $checkout->getTotal() * 100, // Amount in cents
                 'currency' => config('checkout.currency'),
                 'source' => $chargeable['token'],
                 'capture' => true,
             ]);
+            $checkout->getCart()->saveReceipt($checkout, $response->id);
         } catch (\Exception $e) {
             throw new PaymentFailedException($e->getMessage());
         }

@@ -2,7 +2,6 @@
 
 namespace Yab\ShoppingCart;
 
-use Illuminate\Support\Str;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;

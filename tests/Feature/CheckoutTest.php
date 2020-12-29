@@ -14,6 +14,7 @@ use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
+use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
@@ -310,5 +311,25 @@ class CheckoutTest extends TestCase
         $checkout->setPaymentProvider('stripe');
 
         $this->assertEquals(StripePaymentProvider::class, get_class($checkout->getPaymentProvider()));
+    }
+
+    /** @test */
+    public function a_receipt_is_saved_when_the_charge_is_processed()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->setPaymentProvider('local')->charge([ 'token' => 'test_123456' ]);
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $cart->id,
+            'receipt' => json_encode([
+                'subtotal' => $checkout->getSubtotal(),
+                'shipping' => $checkout->getShipping(),
+                'taxes' => $checkout->getTaxes(),
+                'total' => $checkout->getTotal(),
+                'processor_transaction_id' => 'transaction_123456',
+            ]),
+        ]);
     }
 }
