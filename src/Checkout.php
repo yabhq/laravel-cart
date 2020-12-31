@@ -5,6 +5,7 @@ namespace Yab\ShoppingCart;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;
+use App\Logistics\DiscountLogistics;
 use App\Logistics\ShippingLogistics;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
@@ -222,6 +223,43 @@ class Checkout
     }
 
     /**
+     * Apply a discount code to this checkout.
+     *
+     * @param string $code
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function applyDiscountCode(string $code) : Checkout
+    {
+        $amount = app(DiscountLogistics::class)->getDiscountFromCode($this, $code);
+
+        if ($amount == 0) {
+            return $this;
+        }
+
+        $this->setDiscountCode($code);
+        $this->setDiscountAmount($amount);
+
+        return $this;
+    }
+
+    /**
+     * Manually set the discount amount for the checkout (e.g. without
+     * applying a specific code).
+     *
+     * @param float $amount
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function setDiscountAmount(float $amount) : Checkout
+    {
+        $this->cart->discount_amount = $amount;
+        $this->cart->save();
+
+        return $this;
+    }
+
+    /**
      * Get the shipping cost for the checkout.
      *
      * @return float
@@ -242,6 +280,16 @@ class Checkout
     }
 
     /**
+     * Get the discount amount (dollars) for the checkout.
+     *
+     * @return float
+     */
+    public function getDiscount() : float
+    {
+        return $this->cart->discount_amount;
+    }
+
+    /**
      * Get the taxes for the checkout.
      *
      * @return float
@@ -258,7 +306,7 @@ class Checkout
      */
     public function getTotal() : float
     {
-        return round($this->getSubtotal() + $this->getTaxes(), 2);
+        return round($this->getSubtotal() - $this->getDiscount() + $this->getTaxes(), 2);
     }
 
     /**
@@ -313,6 +361,21 @@ class Checkout
         catch(PaymentFailedException $e) {
             app(CartLogistics::class)->afterFailedCheckout($this, $e);
         }
+    }
+
+    /**
+     * Manually tag this checkout with a discount code.
+     *
+     * @param string $code
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    private function setDiscountCode(string $code) : Checkout
+    {
+        $this->cart->discount_code = $code;
+        $this->cart->save();
+
+        return $this;
     }
 
     /**

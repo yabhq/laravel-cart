@@ -41,6 +41,7 @@ Full list of published files:
 * app/Logistics/CartLogistics.php
 * app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
+* app/Logistics/DiscountLogistics.php
 
 ## Usage
 
@@ -79,7 +80,7 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 ```
 
-Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax & shipping costs are determined:
+Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax, shipping and discount amounts are determined:
 
 **app/Logistics/TaxLogistics.php**
 ```php
@@ -89,6 +90,11 @@ public static function getTaxes(Checkout $checkout) : float
 **app/Logistics/ShippingLogistics.php**
 ```php
 public static function getShippingCost(Checkout $checkout) : float
+```
+
+**app/Logistics/DiscountLogistics.php**
+```php
+public static function getDiscountFromCode(Checkout $checkout, string $code) : float
 ```
 
 **app/Logistics/CartLogistics.php**
@@ -164,7 +170,8 @@ Getting the shipping, subtotal, taxes and total:
 
 ```php
 $checkout->getShipping(); // 5.00
-$checkout->getSubtotal(); // 100.00
+$checkout->getSubtotal(); // 110.00
+$checkout->getDiscount(); // 10.00
 $checkout->getTaxes(); // 13.00
 $checkout->getTotal(); // 113.00
 ```

@@ -16,6 +16,8 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->nullableMorphs('purchaser');
+            $table->string('discount_code')->nullable();
+            $table->integer('discount_amount')->default(0);
             $table->json('custom_fields')->nullable();
             $table->json('receipt')->nullable();
             $table->timestamps();

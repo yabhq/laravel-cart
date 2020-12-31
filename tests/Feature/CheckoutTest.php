@@ -329,6 +329,7 @@ class CheckoutTest extends TestCase
             'receipt' => json_encode([
                 'subtotal' => $checkout->getSubtotal(),
                 'shipping' => $checkout->getShipping(),
+                'discount' => $checkout->getDiscount(),
                 'taxes' => $checkout->getTaxes(),
                 'total' => $checkout->getTotal(),
                 'processor_transaction_id' => 'transaction_123456',
@@ -368,5 +369,29 @@ class CheckoutTest extends TestCase
             'purchaser_id' => $customer->id,
             'purchaser_type' => $customer->getMorphClass(),
         ]);
+    }
+
+    /** @test */
+    public function a_discount_can_be_applied_to_the_checkout()
+    {
+        $productOne = factory(Product::class)->create([
+            'price' => 100,
+        ]);
+
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->addItem($productOne, 1);
+
+        // $100 (item cost) + $5 (shipping cost) = $105
+        // $105 x 0.18 = $18.90
+        // $105 + $18.90 = $123.90
+        $this->assertEquals(123.90, $checkout->getTotal());
+
+        $checkout->applyDiscountCode('BADCODE'); // Won't work
+        $this->assertEquals(123.90, $checkout->getTotal());
+
+        $checkout->applyDiscountCode('50OFF'); // Gives 50% off
+        $this->assertEquals(61.95, $checkout->getTotal());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Yab\ShoppingCart\Models;
 
+use Yab\Mint\Casts\Money;
 use Yab\Mint\Traits\UuidModel;
 use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Models\CartItem;
@@ -50,6 +51,7 @@ class Cart extends Model
      * @var array
      */
     protected $casts = [
+        'discount_amount' => Money::class,
         'custom_fields' => 'array',
         'receipt' => 'array',
     ];
@@ -122,6 +124,7 @@ class Cart extends Model
 
         $receipt['subtotal'] = $checkout->getSubtotal();
         $receipt['shipping'] = $checkout->getShipping();
+        $receipt['discount'] = $checkout->getDiscount();
         $receipt['taxes'] = $checkout->getTaxes();
         $receipt['total'] = $checkout->getTotal();
         $receipt['processor_transaction_id'] = $transactionId;

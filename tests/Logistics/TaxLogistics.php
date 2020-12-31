@@ -16,6 +16,6 @@ class TaxLogistics implements TaxLogisticsInterface
      */
     public static function getTaxes(Checkout $checkout) : float
     {
-        return round($checkout->getSubtotal() * 0.18, 2);
+        return round(($checkout->getSubtotal() - $checkout->getDiscount()) * 0.18, 2);
     }
 }
