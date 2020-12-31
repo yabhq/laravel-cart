@@ -122,7 +122,7 @@ Deleting a checkout:
 $checkout->destroy();
 ```
 
-Interacting with the underlying cart models and query builder:
+Interacting with the underlying cart model and query builder:
 
 ```php
 // Yab\ShoppingCart\Models\Cart
@@ -153,6 +153,11 @@ $checkout->updateItem($item->id, 2);
 
 // Remove the item entirely
 $checkout->removeItem($item->id);
+```
+Optionally set a purchaser entity (class must implement Purchaser interface):
+
+```php
+$checkout->setPurchaser($customer);
 ```
 
 Getting the shipping, subtotal, taxes and total:
