@@ -2,9 +2,9 @@
 
 namespace Yab\ShoppingCart\Contracts;
 
-use Yab\ShoppingCart\Models\Cart;
+use Yab\ShoppingCart\Checkout;
 
 interface TaxLogistics
 {
-    public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float;
+    public static function getTaxes(Checkout $checkout) : float;
 }

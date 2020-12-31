@@ -10,12 +10,15 @@ use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
 use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Tests\Models\Product;
+use Yab\ShoppingCart\Tests\Models\Customer;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
+use Yab\ShoppingCart\Tests\Models\NonPurchaser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
+use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
 class CheckoutTest extends TestCase
@@ -326,10 +329,69 @@ class CheckoutTest extends TestCase
             'receipt' => json_encode([
                 'subtotal' => $checkout->getSubtotal(),
                 'shipping' => $checkout->getShipping(),
+                'discount' => $checkout->getDiscount(),
                 'taxes' => $checkout->getTaxes(),
                 'total' => $checkout->getTotal(),
                 'processor_transaction_id' => 'transaction_123456',
             ]),
         ]);
+    }
+
+    /** @test */
+    public function a_purchaser_can_be_set_for_the_checkout()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $customer = factory(Customer::class)->create();
+        $checkout->setPurchaser($customer);
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $cart->id,
+            'purchaser_id' => $customer->id,
+            'purchaser_type' => $customer->getMorphClass(),
+        ]);
+    }
+
+    /** @test */
+    public function a_non_purchaser_cannot_be_added_to_the_checkout()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $this->expectException(PurchaserInvalidException::class);
+
+        $nonPurchaser = factory(NonPurchaser::class)->create();
+        $checkout->setPurchaser($nonPurchaser);
+
+        $this->assertDatabaseMissing('carts', [
+            'id' => $cart->id,
+            'purchaser_id' => $customer->id,
+            'purchaser_type' => $customer->getMorphClass(),
+        ]);
+    }
+
+    /** @test */
+    public function a_discount_can_be_applied_to_the_checkout()
+    {
+        $productOne = factory(Product::class)->create([
+            'price' => 100,
+        ]);
+
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $checkout->addItem($productOne, 1);
+
+        // $100 (item cost) + $5 (shipping cost) = $105
+        // $105 x 0.18 = $18.90
+        // $105 + $18.90 = $123.90
+        $this->assertEquals(123.90, $checkout->getTotal());
+
+        $checkout->applyDiscountCode('BADCODE'); // Won't work
+        $this->assertEquals(123.90, $checkout->getTotal());
+
+        $checkout->applyDiscountCode('50OFF'); // Gives 50% off
+        $this->assertEquals(61.95, $checkout->getTotal());
     }
 }

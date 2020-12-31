@@ -41,6 +41,7 @@ Full list of published files:
 * app/Logistics/CartLogistics.php
 * app/Logistics/ShippingLogistics.php
 * app/Logistics/TaxLogistics.php
+* app/Logistics/DiscountLogistics.php
 
 ## Usage
 
@@ -79,16 +80,21 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 ```
 
-Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax & shipping costs are determined:
+Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax, shipping and discount amounts are determined:
 
 **app/Logistics/TaxLogistics.php**
 ```php
-public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float
+public static function getTaxes(Checkout $checkout) : float
 ```
 
 **app/Logistics/ShippingLogistics.php**
 ```php
-public static function getShippingCost(Cart $cart) : float
+public static function getShippingCost(Checkout $checkout) : float
+```
+
+**app/Logistics/DiscountLogistics.php**
+```php
+public static function getDiscountFromCode(Checkout $checkout, string $code) : float
 ```
 
 **app/Logistics/CartLogistics.php**
@@ -122,7 +128,7 @@ Deleting a checkout:
 $checkout->destroy();
 ```
 
-Interacting with the underlying cart models and query builder:
+Interacting with the underlying cart model and query builder:
 
 ```php
 // Yab\ShoppingCart\Models\Cart
@@ -154,12 +160,18 @@ $checkout->updateItem($item->id, 2);
 // Remove the item entirely
 $checkout->removeItem($item->id);
 ```
+Optionally set a purchaser entity (class must implement Purchaser interface):
+
+```php
+$checkout->setPurchaser($customer);
+```
 
 Getting the shipping, subtotal, taxes and total:
 
 ```php
 $checkout->getShipping(); // 5.00
-$checkout->getSubtotal(); // 100.00
+$checkout->getSubtotal(); // 110.00
+$checkout->getDiscount(); // 10.00
 $checkout->getTaxes(); // 13.00
 $checkout->getTotal(); // 113.00
 ```

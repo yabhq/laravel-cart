@@ -2,27 +2,27 @@
 
 namespace App\Logistics;
 
-use Yab\ShoppingCart\Models\Cart;
+use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Contracts\TaxLogistics as TaxLogisticsInterface;
 
 class TaxLogistics implements TaxLogisticsInterface
 {
     /**
-     * Get the taxes given the subtotal (including shipping), shipping
-     * costs and cart instance.
+     * Get the taxes given the checkout instance.
      *
-     * @param float $subtotal
-     * @param float $shipping
-     * @param \Yab\ShoppingCart\Models\Cart $cart
+     * @param \Yab\ShoppingCart\Checkout $checkout
      *
      * @return float
      */
-    public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float
+    public static function getTaxes(Checkout $checkout) : float
     {
-        // $cart->custom_fields['shipping_address']
-        
-        // Subtotal already includes shipping costs, but shipping cost is included here
-        // separately in case it is needed for any reason.
+        // Determine the taxes as needed. Possibly helpful methods:
+
+        // $checkout->getSubtotal()
+        // $checkout->getDiscount()
+        // $checkout->getCustomField('shipping_address')
+        // $checkout->getCart()
+
         return 0;
     }
 }

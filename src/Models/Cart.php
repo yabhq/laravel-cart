@@ -2,12 +2,14 @@
 
 namespace Yab\ShoppingCart\Models;
 
+use Yab\Mint\Casts\Money;
 use Yab\Mint\Traits\UuidModel;
 use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Cart extends Model
 {
@@ -49,9 +51,20 @@ class Cart extends Model
      * @var array
      */
     protected $casts = [
+        'discount_amount' => Money::class,
         'custom_fields' => 'array',
         'receipt' => 'array',
     ];
+
+    /**
+     * The purchaser entity for this checkout.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function purchaser() : MorphTo
+    {
+        return $this->morphTo();
+    }
 
     /**
      * A cart may have many line items.
@@ -111,6 +124,7 @@ class Cart extends Model
 
         $receipt['subtotal'] = $checkout->getSubtotal();
         $receipt['shipping'] = $checkout->getShipping();
+        $receipt['discount'] = $checkout->getDiscount();
         $receipt['taxes'] = $checkout->getTaxes();
         $receipt['total'] = $checkout->getTotal();
         $receipt['processor_transaction_id'] = $transactionId;

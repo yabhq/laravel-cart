@@ -13,6 +13,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Payment Provider
+    |--------------------------------------------------------------------------
+    |
+    | The default payment provider to use for billing.
+    |
+    | Note: This may be changed at run time using the
+    | $checkout->setPaymentProvider(...) method prior to $checkout->charge().
+    |
+    */
+    'provider' => 'stripe',
+
+    /*
+    |--------------------------------------------------------------------------
     | Stripe Payment Provider
     |--------------------------------------------------------------------------
     |

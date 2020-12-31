@@ -5,9 +5,11 @@ namespace Yab\ShoppingCart;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;
+use App\Logistics\DiscountLogistics;
 use App\Logistics\ShippingLogistics;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
+use Yab\ShoppingCart\Contracts\Purchaser;
 use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
@@ -17,6 +19,7 @@ use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PaymentFailedException;
+use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
@@ -107,6 +110,33 @@ class Checkout
     }
 
     /**
+     * Set the purchaser for the checkout.
+     *
+     * @param mixed $entity
+     *
+     * @return void
+     */
+    public function setPurchaser(mixed $entity)
+    {
+        $this->abortIfNotPurchaser($entity);
+
+        $this->cart->purchaser_id = $entity->getIdentifier();
+        $this->cart->purchaser_type = $entity->getType();
+
+        $this->cart->save();
+    }
+
+    /**
+     * Get the purchaser for the checkout.
+     *
+     * @return mixed
+     */
+    public function getPurchaser()
+    {
+        return $this->cart->purchaser;
+    }
+
+    /**
      * Add an item to the cart.
      *
      * @param mixed $purchaseable
@@ -193,13 +223,50 @@ class Checkout
     }
 
     /**
+     * Apply a discount code to this checkout.
+     *
+     * @param string $code
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function applyDiscountCode(string $code) : Checkout
+    {
+        $amount = app(DiscountLogistics::class)->getDiscountFromCode($this, $code);
+
+        if ($amount == 0) {
+            return $this;
+        }
+
+        $this->setDiscountCode($code);
+        $this->setDiscountAmount($amount);
+
+        return $this;
+    }
+
+    /**
+     * Manually set the discount amount for the checkout (e.g. without
+     * applying a specific code).
+     *
+     * @param float $amount
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    public function setDiscountAmount(float $amount) : Checkout
+    {
+        $this->cart->discount_amount = $amount;
+        $this->cart->save();
+
+        return $this;
+    }
+
+    /**
      * Get the shipping cost for the checkout.
      *
      * @return float
      */
     public function getShipping() : float
     {
-        return round(app(ShippingLogistics::class)->getShippingCost($this->getCart()), 2);
+        return round(app(ShippingLogistics::class)->getShippingCost($this), 2);
     }
 
     /**
@@ -213,17 +280,23 @@ class Checkout
     }
 
     /**
+     * Get the discount amount (dollars) for the checkout.
+     *
+     * @return float
+     */
+    public function getDiscount() : float
+    {
+        return $this->cart->discount_amount;
+    }
+
+    /**
      * Get the taxes for the checkout.
      *
      * @return float
      */
     public function getTaxes() : float
     {
-        return round(app(TaxLogistics::class)->getTaxes(
-            $this->getSubtotal(),
-            $this->getShipping(),
-            $this->getCart()
-        ), 2);
+        return round(app(TaxLogistics::class)->getTaxes($this), 2);
     }
 
     /**
@@ -233,7 +306,7 @@ class Checkout
      */
     public function getTotal() : float
     {
-        return round($this->getSubtotal() + $this->getTaxes(), 2);
+        return round($this->getSubtotal() - $this->getDiscount() + $this->getTaxes(), 2);
     }
 
     /**
@@ -278,7 +351,7 @@ class Checkout
     public function charge(array $chargeable) : void
     {
         if (is_null($this->paymentProvider)) {
-            throw new PaymentProviderMissingException;
+            $this->setPaymentProvider(config('checkout.provider'));
         }
 
         try {
@@ -288,6 +361,21 @@ class Checkout
         catch(PaymentFailedException $e) {
             app(CartLogistics::class)->afterFailedCheckout($this, $e);
         }
+    }
+
+    /**
+     * Manually tag this checkout with a discount code.
+     *
+     * @param string $code
+     *
+     * @return \Yab\ShoppingCart\Checkout
+     */
+    private function setDiscountCode(string $code) : Checkout
+    {
+        $this->cart->discount_code = $code;
+        $this->cart->save();
+
+        return $this;
     }
 
     /**
@@ -304,6 +392,23 @@ class Checkout
     {
         if (!($purchaseable instanceof Purchaseable)) {
             throw new ItemNotPurchaseableException;
+        }
+    }
+
+    /**
+     * Throw an exception if the payload does not implement the purchaser
+     * interface.
+     *
+     * @param mixed $purchaser
+     *
+     * @throws \Yab\ShoppingCart\Exceptions\PurchaserInvalidException
+     *
+     * @return void
+     */
+    private function abortIfNotPurchaser(mixed $purchaser)
+    {
+        if (!($purchaser instanceof Purchaser)) {
+            throw new PurchaserInvalidException;
         }
     }
 
