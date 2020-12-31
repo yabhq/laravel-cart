@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCartsTable extends Migration
+class CreateCustomersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateCartsTable extends Migration
      */
     public function up()
     {
-        Schema::create('carts', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->nullableMorphs('purchaser');
-            $table->json('custom_fields')->nullable();
-            $table->json('receipt')->nullable();
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +27,6 @@ class CreateCartsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('products');
     }
 }

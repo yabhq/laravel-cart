@@ -8,6 +8,7 @@ use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Cart extends Model
 {
@@ -52,6 +53,16 @@ class Cart extends Model
         'custom_fields' => 'array',
         'receipt' => 'array',
     ];
+
+    /**
+     * The purchaser entity for this checkout.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function purchaser() : MorphTo
+    {
+        return $this->morphTo();
+    }
 
     /**
      * A cart may have many line items.

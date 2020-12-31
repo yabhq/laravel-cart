@@ -10,12 +10,15 @@ use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
 use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Tests\Models\Product;
+use Yab\ShoppingCart\Tests\Models\Customer;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
+use Yab\ShoppingCart\Tests\Models\NonPurchaser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
+use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
 class CheckoutTest extends TestCase
@@ -330,6 +333,40 @@ class CheckoutTest extends TestCase
                 'total' => $checkout->getTotal(),
                 'processor_transaction_id' => 'transaction_123456',
             ]),
+        ]);
+    }
+
+    /** @test */
+    public function a_purchaser_can_be_set_for_the_checkout()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $customer = factory(Customer::class)->create();
+        $checkout->setPurchaser($customer);
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $cart->id,
+            'purchaser_id' => $customer->id,
+            'purchaser_type' => $customer->getMorphClass(),
+        ]);
+    }
+
+    /** @test */
+    public function a_non_purchaser_cannot_be_added_to_the_checkout()
+    {
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+
+        $this->expectException(PurchaserInvalidException::class);
+
+        $nonPurchaser = factory(NonPurchaser::class)->create();
+        $checkout->setPurchaser($nonPurchaser);
+
+        $this->assertDatabaseMissing('carts', [
+            'id' => $cart->id,
+            'purchaser_id' => $customer->id,
+            'purchaser_type' => $customer->getMorphClass(),
         ]);
     }
 }

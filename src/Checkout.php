@@ -8,6 +8,7 @@ use Yab\ShoppingCart\Models\Cart;
 use App\Logistics\ShippingLogistics;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Builder;
+use Yab\ShoppingCart\Contracts\Purchaser;
 use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
@@ -17,6 +18,7 @@ use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PaymentFailedException;
+use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
@@ -104,6 +106,33 @@ class Checkout
     public static function getPurchaseable(string $type, mixed $id) : mixed
     {
         return app(CartLogistics::class)->getPurchaseable($type, $id);
+    }
+
+    /**
+     * Set the purchaser for the checkout.
+     *
+     * @param mixed $entity
+     *
+     * @return void
+     */
+    public function setPurchaser(mixed $entity)
+    {
+        $this->abortIfNotPurchaser($entity);
+
+        $this->cart->purchaser_id = $entity->getIdentifier();
+        $this->cart->purchaser_type = $entity->getType();
+
+        $this->cart->save();
+    }
+
+    /**
+     * Get the purchaser for the checkout.
+     *
+     * @return mixed
+     */
+    public function getPurchaser()
+    {
+        return $this->cart->purchaser;
     }
 
     /**
@@ -304,6 +333,23 @@ class Checkout
     {
         if (!($purchaseable instanceof Purchaseable)) {
             throw new ItemNotPurchaseableException;
+        }
+    }
+
+    /**
+     * Throw an exception if the payload does not implement the purchaser
+     * interface.
+     *
+     * @param mixed $purchaser
+     *
+     * @throws \Yab\ShoppingCart\Exceptions\PurchaserInvalidException
+     *
+     * @return void
+     */
+    private function abortIfNotPurchaser(mixed $purchaser)
+    {
+        if (!($purchaser instanceof Purchaser)) {
+            throw new PurchaserInvalidException;
         }
     }
 
