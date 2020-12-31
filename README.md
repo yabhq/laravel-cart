@@ -83,12 +83,12 @@ Not every e-commerce store is the same. This package provides several "logistics
 
 **app/Logistics/TaxLogistics.php**
 ```php
-public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float
+public static function getTaxes(Checkout $checkout) : float
 ```
 
 **app/Logistics/ShippingLogistics.php**
 ```php
-public static function getShippingCost(Cart $cart) : float
+public static function getShippingCost(Checkout $checkout) : float
 ```
 
 **app/Logistics/CartLogistics.php**

@@ -228,7 +228,7 @@ class Checkout
      */
     public function getShipping() : float
     {
-        return round(app(ShippingLogistics::class)->getShippingCost($this->getCart()), 2);
+        return round(app(ShippingLogistics::class)->getShippingCost($this), 2);
     }
 
     /**
@@ -248,11 +248,7 @@ class Checkout
      */
     public function getTaxes() : float
     {
-        return round(app(TaxLogistics::class)->getTaxes(
-            $this->getSubtotal(),
-            $this->getShipping(),
-            $this->getCart()
-        ), 2);
+        return round(app(TaxLogistics::class)->getTaxes($this), 2);
     }
 
     /**

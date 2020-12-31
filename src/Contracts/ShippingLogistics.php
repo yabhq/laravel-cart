@@ -2,9 +2,9 @@
 
 namespace Yab\ShoppingCart\Contracts;
 
-use Yab\ShoppingCart\Models\Cart;
+use Yab\ShoppingCart\Checkout;
 
 interface ShippingLogistics
 {
-    public static function getShippingCost(Cart $cart) : float;
+    public static function getShippingCost(Checkout $checkout) : float;
 }

@@ -2,23 +2,20 @@
 
 namespace Yab\ShoppingCart\Tests\Logistics;
 
-use Yab\ShoppingCart\Models\Cart;
+use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Contracts\TaxLogistics as TaxLogisticsInterface;
 
 class TaxLogistics implements TaxLogisticsInterface
 {
     /**
-     * Get the taxes given the subtotal (including shipping), shipping
-     * costs and cart instance.
+     * Get the taxes given the checkout instance.
      *
-     * @param float $subtotal
-     * @param float $shipping
-     * @param \Yab\ShoppingCart\Models\Cart $cart
+     * @param \Yab\ShoppingCart\Checkout $checkout
      *
      * @return float
      */
-    public static function getTaxes(float $subtotal, float $shipping, Cart $cart) : float
+    public static function getTaxes(Checkout $checkout) : float
     {
-        return round($subtotal * 0.18, 2);
+        return round($checkout->getSubtotal() * 0.18, 2);
     }
 }
