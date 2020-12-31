@@ -307,7 +307,7 @@ class Checkout
     public function charge(array $chargeable) : void
     {
         if (is_null($this->paymentProvider)) {
-            throw new PaymentProviderMissingException;
+            $this->setPaymentProvider(config('checkout.provider'));
         }
 
         try {
