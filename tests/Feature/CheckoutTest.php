@@ -332,7 +332,9 @@ class CheckoutTest extends TestCase
                 'discount' => $checkout->getDiscount(),
                 'taxes' => $checkout->getTaxes(),
                 'total' => $checkout->getTotal(),
-                'processor_transaction_id' => 'transaction_123456',
+                'provider' => [
+                    'transaction_id' => 'transaction_123456',
+                ],
             ]),
         ]);
     }

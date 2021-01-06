@@ -17,6 +17,7 @@ class CheckoutResource extends JsonResource
     {
         return [
             'subtotal' => $this->getSubtotal(),
+            'discount' => $this->getDiscount(),
             'taxes' => $this->getTaxes(),
             'total' => $this->getTotal(),
             'cart' => $this->getCart(),

@@ -83,7 +83,7 @@ class Checkout
      */
     public function getCart() : Cart
     {
-        return $this->cart;
+        return $this->cart->fresh();
     }
 
     /**
@@ -219,6 +219,10 @@ class Checkout
      */
     public function getCustomField(string $key) : mixed
     {
+        if (!$this->cart->custom_fields || !isset($this->cart->custom_fields[$key])) {
+            return null;
+        }
+
         return $this->cart->custom_fields[$key];
     }
 
@@ -276,7 +280,7 @@ class Checkout
      */
     public function getSubtotal() : float
     {
-        return round($this->cart->items->sum('price') + $this->getShipping(), 2);
+        return round($this->getCart()->items->sum('price') + $this->getShipping(), 2);
     }
 
     /**

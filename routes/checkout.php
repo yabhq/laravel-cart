@@ -2,6 +2,7 @@
 
 use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutController;
 use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutItemController;
+use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutDiscountController;
 
 Route::group([
     'namespace' => 'Yab\ShoppingCart\Http\Controllers\Checkout',
@@ -14,4 +15,6 @@ Route::group([
     Route::post('checkout/{checkout}/items', [CheckoutItemController::class, 'store'])->name('checkout.items.store');
     Route::put('checkout/{checkout}/items/{itemId}', [CheckoutItemController::class, 'update'])->name('checkout.items.update');
     Route::delete('checkout/{checkout}/items/{itemId}', [CheckoutItemController::class, 'destroy'])->name('checkout.items.destroy');
+
+    Route::post('checkout/{checkout}/discount', [CheckoutDiscountController::class, 'store'])->name('checkout.discount');
 });
