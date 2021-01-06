@@ -114,11 +114,11 @@ class Cart extends Model
      * Save a payment receipt given the processor transaction ID.
      *
      * @param \Yab\ShoppingCart\Checkout $checkout
-     * @param string $transactionId
+     * @param array $providerReceipt
      *
      * @return \Yab\ShoppingCart\Models\Cart
      */
-    public function saveReceipt(Checkout $checkout, string $transactionId) : Cart
+    public function saveReceipt(Checkout $checkout, array $providerReceipt) : Cart
     {
         $receipt = $this->receipt;
 
@@ -127,7 +127,7 @@ class Cart extends Model
         $receipt['discount'] = $checkout->getDiscount();
         $receipt['taxes'] = $checkout->getTaxes();
         $receipt['total'] = $checkout->getTotal();
-        $receipt['processor_transaction_id'] = $transactionId;
+        $receipt['provider'] = $providerReceipt;
 
         $this->receipt = $receipt;
         $this->save();

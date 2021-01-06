@@ -2,6 +2,7 @@
 
 namespace Yab\ShoppingCart\Tests\Feature\Api;
 
+use Yab\ShoppingCart\Checkout;
 use Yab\ShoppingCart\Models\Cart;
 use Yab\ShoppingCart\Tests\TestCase;
 use Yab\ShoppingCart\Models\CartItem;
@@ -107,6 +108,32 @@ class CheckoutTest extends TestCase
 
         $this->assertSoftDeleted('carts', [
             'id' => $cart->id,
+        ]);
+    }
+
+    /** @test */
+    public function a_discount_can_be_applied_to_a_checkout_via_the_api()
+    {
+        $cart = factory(Cart::class)->create();
+
+        $checkout = Checkout::findById($cart->id);
+
+        $product = factory(Product::class)->create([
+            'price' => 10,
+        ]);
+
+        $checkout->addItem(purchaseable: $product, qty: 1);
+
+        $response = $this->post(route('checkout.discount', [ $cart->id ]), [
+            'code' => '50OFF'
+        ]);
+    
+        $response->assertSuccessful();
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $cart->id,
+            'discount_code' => '50OFF',
+            'discount_amount' => round($checkout->getSubtotal() * 0.5, 2) * 100,
         ]);
     }
 }
