@@ -78,6 +78,8 @@ DELETE /checkouts/{checkout}
 POST /checkouts/{checkout}/items
 PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
+
+POST /checkouts/{checkout}/discount
 ```
 
 Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax, shipping and discount amounts are determined:
