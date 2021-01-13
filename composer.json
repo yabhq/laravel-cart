@@ -19,7 +19,7 @@
         "php": "^8.0",
         "illuminate/support": "^8.0",
         "stripe/stripe-php": "^7.67",
-        "yabhq/laravel-mint": "^0.15.0"
+        "yabhq/laravel-mint": "^0.17"
     },
     "require-dev": {
         "laravel/legacy-factories": "^1.0.4",
