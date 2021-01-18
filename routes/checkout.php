@@ -2,6 +2,7 @@
 
 use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutController;
 use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutItemController;
+use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutStripeController;
 use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutDiscountController;
 
 Route::group([
@@ -17,4 +18,6 @@ Route::group([
     Route::delete('checkout/{checkout}/items/{itemId}', [CheckoutItemController::class, 'destroy'])->name('checkout.items.destroy');
 
     Route::post('checkout/{checkout}/discount', [CheckoutDiscountController::class, 'store'])->name('checkout.discount');
+
+    Route::post('checkout/{checkout}/stripe', [CheckoutStripeController::class, 'store'])->name('checkout.stripe');
 });
