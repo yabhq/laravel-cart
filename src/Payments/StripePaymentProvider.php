@@ -46,31 +46,48 @@ class StripePaymentProvider implements PaymentProvider
         $payload = [
             'amount' => $checkout->getTotal() * 100, // Amount in cents
             'currency' => config('checkout.currency'),
-            'source' => $chargeable['token'],
             'capture' => true,
         ];
 
-        // TODO: Creation of Stripe customer to tie to charge
-        // if (isset($chargeable['customer_id'])) {
-        //     $payload['customer'] = $chargeable['customer_id'];
-        // } else {
-        //     $payload['customer'] = self::createCustomer($stripe, $chargeable)->id;
-        // }
+        $source = self::createSource($stripe, $chargeable['token'])->id;
+        $customer = self::createCustomer($stripe, $source, $chargeable['email'] ?? '');
+        
+        $payload['customer'] = $customer->id;
 
         return $stripe->charges->create($payload);
     }
 
     /**
-     * Create a new Stripe customer for the charge.
+     * Create a new Stripe customer for the upcoming charge.
      *
      * @param \Stripe\StripeClient $stripe
-     * @param array $chargeable
+     * @param string $source
+     * @param string $email
      *
      * @return object
      */
-    private static function createCustomer(StripeClient $stripe, array $chargeable) : object
+    private static function createCustomer(StripeClient $stripe, string $source, string $email) : object
     {
-        return $stripe->customers->create();
+        return $stripe->customers->create([
+            'source' => $source,
+            'email' => $email
+        ]);
+    }
+
+    /**
+     * Create a new Stripe source for the tokenized card data.
+     *
+     * @param \Stripe\StripeClient $stripe
+     * @param string $token
+     *
+     * @return object
+     */
+    private static function createSource(StripeClient $stripe, string $token) : object
+    {
+        return $stripe->sources->create([
+            'type' => 'card',
+            'token' => $token,
+        ]);
     }
 
     /**
