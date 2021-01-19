@@ -58,6 +58,19 @@ class Product extends Model implements PurchaseableInterface
 }
 ```
 
+Next we should implement the *Purchaser* interface on the model representing the end customer.
+
+**app/Models/Customer.php**
+```php
+use Yab\ShoppingCart\Traits\Purchaser;
+use Yab\ShoppingCart\Contracts\Purchaser as PurchaserInterface;
+
+class Customer extends Model implements PurchaserInterface
+{
+    use Purchaser;
+}
+```
+
 If you would like to use the built-in cart API endpoints, you can simply include *checkout.php* in your existing routes file.
 
 **routes/api.php**
@@ -80,6 +93,7 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 
 POST /checkouts/{checkout}/discount
+POST /checkouts/{checkout}/stripe
 ```
 
 Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax, shipping and discount amounts are determined:
