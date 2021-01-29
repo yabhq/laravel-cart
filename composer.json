@@ -33,7 +33,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yab\\ShoppingCart\\Tests\\": "tests"
+            "Yab\\ShoppingCart\\Tests\\": "tests",
+            "App\\Http\\Controllers\\Checkout\\": "src/Http/Controllers/Published"
         }
     },
     "minimum-stability": "dev",
