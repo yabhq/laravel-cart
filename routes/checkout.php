@@ -1,9 +1,9 @@
 <?php
 
-use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutController;
-use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutItemController;
-use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutStripeController;
-use Yab\ShoppingCart\Http\Controllers\Checkout\CheckoutDiscountController;
+use App\Http\Controllers\Checkout\CheckoutController;
+use App\Http\Controllers\Checkout\CheckoutItemController;
+use App\Http\Controllers\Checkout\CheckoutStripeController;
+use App\Http\Controllers\Checkout\CheckoutDiscountController;
 
 Route::group([
     'namespace' => 'Yab\ShoppingCart\Http\Controllers\Checkout',

@@ -29,6 +29,9 @@ class ShoppingCartServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/Logistics' => app_path('Logistics'),
             ], 'logistics');
+            $this->publishes([
+                __DIR__.'/Http/Controllers/Published' => app_path('Http/Controllers/Checkout'),
+            ], 'controllers');
         }
     }
 }

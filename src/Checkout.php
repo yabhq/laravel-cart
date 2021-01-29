@@ -149,6 +149,8 @@ class Checkout
     public function addItem(mixed $purchaseable, int $qty, ?float $price = null, ?array $options = []) : CartItem
     {
         $this->abortIfNotPurchaseable($purchaseable);
+        
+        app(CartLogistics::class)->beforeCartItemAdded($this, $purchaseable, $qty);
 
         $item = $this->cart->getItem($purchaseable);
         $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();

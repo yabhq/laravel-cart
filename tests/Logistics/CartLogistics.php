@@ -23,6 +23,19 @@ class CartLogistics implements CartLogisticsInterface
     }
 
     /**
+     * Logic which fires immediately prior to an item being added to cart.
+     *
+     * @param \Yab\ShoppingCart\Checkout $checkout
+     * @param mixed $purchaseable
+     * @param int $qty
+     *
+     * @return void
+     */
+    public static function beforeCartItemAdded(Checkout $checkout, mixed $purchaseable, int $qty) : void
+    {
+    }
+
+    /**
      * Custom logic following a successful checkout attempt.
      *
      * @param \Yab\ShoppingCart\Checkout $checkout
