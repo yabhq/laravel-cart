@@ -95,11 +95,11 @@ class Cart extends Model
      * Set a custom field value for this cart.
      *
      * @param string $key
-     * @param array $payload
+     * @param mixed $payload
      *
      * @return \Yab\ShoppingCart\Models\Cart
      */
-    public function setCustomField(string $key, array $payload) : Cart
+    public function setCustomField(string $key, mixed $payload) : Cart
     {
         $custom = $this->custom_fields;
         $custom[$key] = $payload;

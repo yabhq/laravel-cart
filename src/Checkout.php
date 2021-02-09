@@ -201,11 +201,11 @@ class Checkout
      * Set a custom field value for this cart.
      *
      * @param string $key
-     * @param array $payload
+     * @param mixed $payload
      *
      * @return \Yab\ShoppingCart\Checkout
      */
-    public function setCustomField(string $key, array $payload) : Checkout
+    public function setCustomField(string $key, mixed $payload) : Checkout
     {
         $this->cart->setCustomField($key, $payload);
 
