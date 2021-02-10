@@ -19,6 +19,7 @@ use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PaymentFailedException;
+use Yab\ShoppingCart\Exceptions\CheckoutNotFoundException;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
@@ -51,7 +52,13 @@ class Checkout
      */
     public static function findById(string $checkoutId) : Checkout
     {
-        return new Checkout(Cart::findOrFail($checkoutId));
+        $checkout = Cart::find($checkoutId);
+
+        if (!$checkout) {
+            throw new CheckoutNotFoundException;
+        }
+
+        return new Checkout($checkout);
     }
 
     /**
