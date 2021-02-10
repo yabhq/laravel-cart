@@ -66,6 +66,18 @@ class CheckoutTest extends TestCase
     }
 
     /** @test */
+    public function a_non_existent_checkout_returns_a_404_not_found_response()
+    {
+        $response = $this->get(route('checkout.show', [ 'invalid-uuid' ]));
+    
+        $response->assertNotFound();
+
+        $response->assertJson([
+            'message' => 'The specified checkout does not exist',
+        ]);
+    }
+
+    /** @test */
     public function a_checkout_shipping_address_can_be_updated_via_the_api()
     {
         $cart = factory(Cart::class)->create();

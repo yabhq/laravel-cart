@@ -16,7 +16,6 @@ use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Tests\Models\NonPurchaser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
-use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;

@@ -22,6 +22,7 @@ class CheckoutStripeController extends Controller
         $checkout = Checkout::findById($checkoutId);
 
         $checkout->setPaymentProvider('stripe')->charge([ 'token' => $request->token ]);
+        $checkout->getCart()->delete();
 
         return new CheckoutResource($checkout);
     }
