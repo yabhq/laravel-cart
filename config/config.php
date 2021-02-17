@@ -1,5 +1,7 @@
 <?php
 
+use Yab\ShoppingCart\Payments\StripePaymentProvider;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -34,6 +36,7 @@ return [
     |
     */
     'stripe' => [
+        'provider' => StripePaymentProvider::class,
         'secret_key' => env('STRIPE_SECRET'),
         'public_key' => env('STRIPE_KEY'),
     ],

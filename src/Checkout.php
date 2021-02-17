@@ -333,7 +333,7 @@ class Checkout
     {
         $supported = self::getSupportedPaymentProviders();
         
-        $class = $supported[$provider] ?? '';
+        $class = $supported[$provider] ?? $provider;
 
         if(!class_exists($class) || !(new $class instanceof PaymentProvider)) {
             throw new PaymentProviderInvalidException;
@@ -373,6 +373,7 @@ class Checkout
         }
         catch(PaymentFailedException $e) {
             app(CartLogistics::class)->afterFailedCheckout($this, $e);
+            throw $e;
         }
     }
 
