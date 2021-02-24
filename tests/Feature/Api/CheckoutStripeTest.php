@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
-use Yab\ShoppingCart\Payments\StripePaymentProvider;
-
 class CheckoutStripeTest extends TestCase
 {
     use RefreshDatabase;

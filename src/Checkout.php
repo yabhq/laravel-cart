@@ -21,6 +21,7 @@ use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PaymentFailedException;
 use Yab\ShoppingCart\Exceptions\CheckoutNotFoundException;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
+use Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
@@ -273,6 +274,16 @@ class Checkout
     }
 
     /**
+     * Whether or not this checkout has the info needed to calculate the total.
+     *
+     * @return bool
+     */
+    public function hasInfoNeededToCalculateTotal() : bool
+    {
+        return app(CartLogistics::class)->hasInfoNeededToCalculateTotal($this);
+    }
+
+    /**
      * Get the shipping cost for the checkout.
      *
      * @return float
@@ -363,6 +374,8 @@ class Checkout
      */
     public function charge(array $chargeable) : void
     {
+        $this->abortIfMissingTotals();
+
         if (is_null($this->paymentProvider)) {
             $this->setPaymentProvider(config('checkout.provider'));
         }
@@ -423,6 +436,21 @@ class Checkout
     {
         if (!($purchaser instanceof Purchaser)) {
             throw new PurchaserInvalidException;
+        }
+    }
+
+    /**
+     * Throw an exception if the checkout is missing info needed to
+     * calculate totals.
+     *
+     * @throws \Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException
+     *
+     * @return void
+     */
+    private function abortIfMissingTotals()
+    {
+        if (!$this->hasInfoNeededToCalculateTotal()) {
+            throw new CheckoutMissingInfoException;
         }
     }
 
