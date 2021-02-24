@@ -36,6 +36,18 @@ class CartLogistics implements CartLogisticsInterface
     }
 
     /**
+     * Determines if a checkout has all the information required to complete checkout.
+     *
+     * @param \Yab\ShoppingCart\Checkout $checkout
+     *
+     * @return bool
+     */
+    public static function hasInfoNeededToCalculateTotal(Checkout $checkout) : bool
+    {
+        return true;
+    }
+
+    /**
      * Custom logic following a successful checkout attempt.
      *
      * @param \Yab\ShoppingCart\Checkout $checkout

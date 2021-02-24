@@ -17,10 +17,12 @@ class CheckoutResource extends JsonResource
     {
         return [
             'subtotal' => $this->getSubtotal(),
-            'shipping' => $this->getShipping(),
-            'discount' => $this->getDiscount(),
-            'taxes' => $this->getTaxes(),
-            'total' => $this->getTotal(),
+            $this->mergeWhen($this->hasInfoNeededToCalculateTotal(), [
+                'shipping' => $this->getShipping(),
+                'discount' => $this->getDiscount(),
+                'taxes' => $this->getTaxes(),
+                'total' => $this->getTotal(),
+            ]),
             'cart' => $this->getCart(),
         ];
     }
