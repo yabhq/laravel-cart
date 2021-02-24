@@ -24,8 +24,6 @@ class CheckoutTest extends TestCase
 
         $response->assertJson([
             'subtotal' => 0,
-            'taxes' => 0,
-            'total' => 0,
             'cart' => [
                 'id' => $cart->id,
             ],
@@ -52,8 +50,6 @@ class CheckoutTest extends TestCase
 
         $response->assertJson([
             'subtotal' => 14.95,
-            'taxes' => 2.69,
-            'total' => 17.64,
             'cart' => [
                 'id' => $item->cart->id,
                 'items' => [
