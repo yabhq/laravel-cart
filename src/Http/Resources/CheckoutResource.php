@@ -15,15 +15,30 @@ class CheckoutResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $arr = [
             'subtotal' => $this->getSubtotal(),
-            $this->mergeWhen($this->hasInfoNeededToCalculateTotal(), [
-                'shipping' => $this->getShipping(),
-                'discount' => $this->getDiscount(),
-                'taxes' => $this->getTaxes(),
-                'total' => $this->getTotal(),
-            ]),
             'cart' => $this->getCart(),
+        ];
+
+        if ($this->hasInfoNeededToCalculateTotal()) {
+            $arr[] = $this->getCheckoutTotals();
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Get the shipping, discount, taxes and total for the checkout.
+     *
+     * @return array
+     */
+    private function getCheckoutTotals() : array
+    {
+        return [
+            'shipping' => $this->getShipping(),
+            'discount' => $this->getDiscount(),
+            'taxes' => $this->getTaxes(),
+            'total' => $this->getTotal(),
         ];
     }
 }
