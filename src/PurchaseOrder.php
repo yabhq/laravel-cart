@@ -39,6 +39,26 @@ class PurchaseOrder
     }
 
     /**
+     * Create a new order for a particular checkout.
+     *
+     * @param \Yab\ShoppingCart\Checkout $checkout
+     * 
+     * @return \Yab\ShoppingCart\PurchaseOrder
+     */
+    public static function createForCheckout(Checkout $checkout) : PurchaseOrder
+    {
+        $order = $checkout->getModel()->createOrder(
+            subtotal: $checkout->getSubtotal(),
+            shipping: $checkout->getShipping(),
+            taxes: $checkout->getTaxes(),
+            discount: $checkout->getDiscount(),
+            total: $checkout->getTotal()
+        );
+
+        return new PurchaseOrder($order->fresh());
+    }
+
+    /**
      * Destroy this order instance and soft delete the order model.
      *
      * @return void

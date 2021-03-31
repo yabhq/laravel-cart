@@ -397,15 +397,7 @@ class Checkout
      */
     public function convertToOrder() : PurchaseOrder
     {
-        $order = $this->getModel()->createOrder(
-            subtotal: $this->getSubtotal(),
-            shipping: $this->getShipping(),
-            taxes: $this->getTaxes(),
-            discount: $this->getDiscount(),
-            total: $this->getTotal()
-        );
-
-        $purchaseOrder = PurchaseOrder::findById($order->id);
+        $purchaseOrder = PurchaseOrder::createForCheckout($this);
 
         app(OrderLogistics::class)->afterOrderPlaced($purchaseOrder);
 
