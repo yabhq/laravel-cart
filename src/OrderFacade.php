@@ -2,17 +2,17 @@
 
 namespace Yab\ShoppingCart;
 
+use Yab\ShoppingCart\Models\Order;
 use Illuminate\Database\Eloquent\Builder;
-use Yab\ShoppingCart\Models\Order as OrderModel;
 
-class Order
+class OrderFacade
 {
     /**
      * Create a new order instance for an order model.
      *
      * @param \Yab\ShoppingCart\Models\Order $order
      */
-    public function __construct(protected OrderModel $order)
+    public function __construct(protected Order $order)
     {
     }
 
@@ -21,21 +21,21 @@ class Order
      *
      * @param string $id
      *
-     * @return \Yab\ShoppingCart\Order
+     * @return \Yab\ShoppingCart\OrderFacade
      */
-    public static function findById(string $id) : Order
+    public static function findById(string $id) : OrderFacade
     {
-        return new Order(OrderModel::findOrFail($id));
+        return new OrderFacade(Order::findOrFail($id));
     }
 
     /**
      * Create a fresh new order with a new ID.
      *
-     * @return \Yab\ShoppingCart\Order
+     * @return \Yab\ShoppingCart\OrderFacade
      */
-    public static function create() : Order
+    public static function create() : OrderFacade
     {
-        return new Order(OrderModel::create());
+        return new OrderFacade(Order::create());
     }
 
     /**
@@ -55,7 +55,7 @@ class Order
      *
      * @return \Yab\ShoppingCart\Models\Order
      */
-    public function getModel() : OrderModel
+    public function getModel() : Order
     {
         return $this->order->fresh();
     }
@@ -67,6 +67,6 @@ class Order
      */
     public function getBuilder() : Builder
     {
-        return OrderModel::whereId($this->order->id);
+        return Order::whereId($this->order->id);
     }
 }
