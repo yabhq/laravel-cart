@@ -2,8 +2,10 @@
 
 namespace Yab\ShoppingCart;
 
+use Yab\ShoppingCart\Order;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
+use App\Logistics\OrderLogistics;
 use Yab\ShoppingCart\Models\Cart;
 use App\Logistics\DiscountLogistics;
 use App\Logistics\ShippingLogistics;
@@ -15,6 +17,7 @@ use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Contracts\PaymentProvider;
+use Yab\ShoppingCart\Models\Order as OrderModel;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
@@ -24,7 +27,6 @@ use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
-use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
 
 class Checkout
 {
@@ -38,7 +40,7 @@ class Checkout
     /**
      * Create a new checkout instance for a cart.
      *
-     * @param \Yab\ShoppingCart\Models\Cart
+     * @param \Yab\ShoppingCart\Models\Cart $cart
      */
     public function __construct(protected Cart $cart)
     {
@@ -388,6 +390,26 @@ class Checkout
             app(CartLogistics::class)->afterFailedCheckout($this, $e);
             throw $e;
         }
+    }
+
+    /**
+     * Convert this checkout to a full fledged order.
+     *
+     * @return \Yab\ShoppingCart\Order
+     */
+    public function convertToOrder() : Order
+    {
+        $order = Order::findById($this->getCart()->createOrder(
+            subtotal: $this->getSubtotal(),
+            shipping: $this->getShipping(),
+            taxes: $this->getTaxes(),
+            discount: $this->getDiscount(),
+            total: $this->getTotal()
+        )->id);
+
+        app(OrderLogistics::class)->afterOrderPlaced($order);
+
+        return $order;
     }
 
     /**

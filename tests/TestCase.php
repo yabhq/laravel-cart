@@ -4,11 +4,13 @@ namespace Yab\ShoppingCart\Tests;
 
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
+use App\Logistics\OrderLogistics;
 use App\Logistics\DiscountLogistics;
 use App\Logistics\ShippingLogistics;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Yab\ShoppingCart\Tests\Logistics\TaxLogistics as TaxLogisticsTest;
 use Yab\ShoppingCart\Tests\Logistics\CartLogistics as CartLogisticsTest;
+use Yab\ShoppingCart\Tests\Logistics\OrderLogistics as OrderLogisticsTest;
 use Yab\ShoppingCart\Tests\Logistics\DiscountLogistics as DiscountLogisticsTest;
 use Yab\ShoppingCart\Tests\Logistics\ShippingLogistics as ShippingLogisticsTest;
 
@@ -32,6 +34,7 @@ abstract class TestCase extends OrchestraTestCase
         app()->bind(TaxLogistics::class, TaxLogisticsTest::class);
         app()->bind(ShippingLogistics::class, ShippingLogisticsTest::class);
         app()->bind(DiscountLogistics::class, DiscountLogisticsTest::class);
+        app()->bind(OrderLogistics::class, OrderLogisticsTest::class);
     }
 
     /**

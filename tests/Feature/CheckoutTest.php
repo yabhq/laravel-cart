@@ -395,4 +395,49 @@ class CheckoutTest extends TestCase
         $checkout->applyDiscountCode('50OFF'); // Gives 50% off
         $this->assertEquals(61.95, $checkout->getTotal());
     }
+
+    /** @test */
+    public function a_checkout_can_be_converted_to_an_order()
+    {
+        $productOne = factory(Product::class)->create([
+            'price' => 100,
+        ]);
+
+        $productTwo = factory(Product::class)->create([
+            'price' => 50,
+        ]);
+
+        $cart = factory(Cart::class)->create();
+        $checkout = new Checkout($cart);
+        $checkout->addItem(purchaseable: $productOne, qty: 2);
+        $checkout->addItem(purchaseable: $productTwo, qty: 1);
+        $order = $checkout->convertToOrder();
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->getModel()->id,
+            'cart_id' => $cart->id,
+            'subtotal' => 26000,
+            'shipping' => 1000,
+            'taxes' => 4680,
+            'total' => 30680,
+        ]);
+
+        $this->assertDatabaseHas('order_items', [
+            'order_id' => $order->getModel()->id,
+            'purchaseable_id' => $productOne->id,
+            'purchaseable_type' => $productOne->getMorphClass(),
+            'qty' => 2,
+            'unit_price' => 10000,
+            'price' => 20000,
+        ]);
+
+        $this->assertDatabaseHas('order_items', [
+            'order_id' => $order->getModel()->id,
+            'purchaseable_id' => $productTwo->id,
+            'purchaseable_type' => $productTwo->getMorphClass(),
+            'qty' => 1,
+            'unit_price' => 5000,
+            'price' => 5000,
+        ]);
+    }
 }

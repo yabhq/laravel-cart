@@ -106,4 +106,27 @@ class CartItem extends Model
 
         return $this;
     }
+    
+    /**
+     * Create an order item for this cart item.
+     *
+     * @param \Yab\ShoppingCart\Models\Order $order
+     *
+     * @return \Yab\ShopingCart\Models\OrderItem
+     */
+    public function createOrderItem(Order $order) : OrderItem
+    {
+        $item = $order->items()->make();
+
+        $item->purchaseable_id = $this->purchaseable_id;
+        $item->purchaseable_type = $this->purchaseable_type;
+        $item->qty = $this->qty;
+        $item->unit_price = $this->unit_price;
+        $item->price = $this->price;
+        $item->custom_fields = $this->custom_fields;
+
+        $item->save();
+
+        return $item->fresh();
+    }
 }

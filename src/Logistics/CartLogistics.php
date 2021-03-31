@@ -55,7 +55,8 @@ class CartLogistics implements CartLogisticsInterface
      */
     public static function afterSuccessfulCheckout(Checkout $checkout) : void
     {
-        // For example, you may want to create an order here
+        // You may want to create an order here
+        // $checkout->convertToOrder();
     }
 
     /**

@@ -5,9 +5,11 @@ namespace Yab\ShoppingCart\Models;
 use Yab\Mint\Casts\Money;
 use Yab\Mint\Traits\UuidModel;
 use Yab\ShoppingCart\Checkout;
+use Yab\ShoppingCart\Models\Order;
 use Yab\ShoppingCart\Models\CartItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -77,6 +79,16 @@ class Cart extends Model
     }
 
     /**
+     * Finalized carts may have an order associated with them.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order(): HasOne
+    {
+        return $this->hasOne(Order::class);
+    }
+
+    /**
      * Create or retrieve the cart item for the given purchaseable.
      *
      * @param mixed $purchaseable
@@ -133,5 +145,40 @@ class Cart extends Model
         $this->save();
 
         return $this;
+    }
+
+    /**
+     * Create an order for this cart and return it.
+     *
+     * @return \Yab\ShoppingCart\Models\Order
+     */
+    public function createOrder(
+        float $subtotal,
+        float $shipping,
+        float $taxes,
+        float $discount,
+        float $total
+    ) : Order
+    {
+        $order = new Order;
+
+        $order->cart_id = $this->id;
+        $order->purchaser_id = $this->purchaser_id;
+        $order->purchaser_type = $this->purchaser_type;
+        $order->subtotal = $subtotal;
+        $order->shipping = $shipping;
+        $order->taxes = $taxes;
+        $order->total = $total;
+        $order->discount_code = $this->discount_code;
+        $order->discount_amount = $discount;
+        $order->custom_fields = $this->custom_fields;
+        $order->receipt = $this->receipt;
+        $order->save();
+
+        $this->items->each(function ($item) use ($order) {
+            $item->createOrderItem($order);
+        });
+
+        return $order->fresh();
     }
 }
