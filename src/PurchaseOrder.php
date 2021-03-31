@@ -5,7 +5,7 @@ namespace Yab\ShoppingCart;
 use Yab\ShoppingCart\Models\Order;
 use Illuminate\Database\Eloquent\Builder;
 
-class OrderFacade
+class PurchaseOrder
 {
     /**
      * Create a new order instance for an order model.
@@ -21,21 +21,21 @@ class OrderFacade
      *
      * @param string $id
      *
-     * @return \Yab\ShoppingCart\OrderFacade
+     * @return \Yab\ShoppingCart\PurchaseOrder
      */
-    public static function findById(string $id) : OrderFacade
+    public static function findById(string $id) : PurchaseOrder
     {
-        return new OrderFacade(Order::findOrFail($id));
+        return new PurchaseOrder(Order::findOrFail($id));
     }
 
     /**
      * Create a fresh new order with a new ID.
      *
-     * @return \Yab\ShoppingCart\OrderFacade
+     * @return \Yab\ShoppingCart\PurchaseOrder
      */
-    public static function create() : OrderFacade
+    public static function create() : PurchaseOrder
     {
-        return new OrderFacade(Order::create());
+        return new PurchaseOrder(Order::create());
     }
 
     /**

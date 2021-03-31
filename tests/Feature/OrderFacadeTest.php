@@ -2,22 +2,22 @@
 
 namespace Yab\ShoppingCart\Tests\Feature;
 
-use Yab\ShoppingCart\OrderFacade;
+use Yab\ShoppingCart\PurchaseOrder;
 use Yab\ShoppingCart\Models\Order;
 use Yab\ShoppingCart\Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class OrderFacadeTest extends TestCase
+class PurchaseOrderTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
     public function a_new_order_can_be_created()
     {
-        $facade = OrderFacade::create();
+        $facade = PurchaseOrder::create();
 
-        $this->assertTrue($facade instanceof OrderFacade);
+        $this->assertTrue($facade instanceof PurchaseOrder);
 
         $this->assertDatabaseHas('orders', [
             'id' => $facade->getModel()->id,
@@ -33,9 +33,9 @@ class OrderFacadeTest extends TestCase
             'id' => $order->id,
         ]);
 
-        $facade = OrderFacade::findById($order->id);
+        $facade = PurchaseOrder::findById($order->id);
 
-        $this->assertTrue($facade instanceof OrderFacade);
+        $this->assertTrue($facade instanceof PurchaseOrder);
         $this->assertEquals($order->id, $facade->getModel()->id);
     }
 
@@ -44,7 +44,7 @@ class OrderFacadeTest extends TestCase
     {
         $order = factory(Order::class)->create();
 
-        $facade = OrderFacade::findById($order->id);
+        $facade = PurchaseOrder::findById($order->id);
         $facade->destroy();
 
         $this->assertSoftDeleted('orders', [
@@ -57,7 +57,7 @@ class OrderFacadeTest extends TestCase
     {
         $order = factory(Order::class)->create();
 
-        $facade = new OrderFacade($order);
+        $facade = new PurchaseOrder($order);
 
         $this->assertTrue($facade->getBuilder() instanceof Builder);
 

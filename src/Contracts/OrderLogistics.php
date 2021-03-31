@@ -2,9 +2,9 @@
 
 namespace Yab\ShoppingCart\Contracts;
 
-use Yab\ShoppingCart\OrderFacade;
+use Yab\ShoppingCart\PurchaseOrder;
 
 interface OrderLogistics
 {
-    public static function afterOrderPlaced(OrderFacade $order) : void;
+    public static function afterOrderPlaced(PurchaseOrder $order) : void;
 }

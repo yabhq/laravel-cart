@@ -395,11 +395,11 @@ class Checkout
     /**
      * Convert this checkout to a full fledged order.
      *
-     * @return \Yab\ShoppingCart\OrderFacade
+     * @return \Yab\ShoppingCart\PurchaseOrder
      */
-    public function convertToOrder() : OrderFacade
+    public function convertToOrder() : PurchaseOrder
     {
-        $order = OrderFacade::findById($this->getCart()->createOrder(
+        $order = PurchaseOrder::findById($this->getCart()->createOrder(
             subtotal: $this->getSubtotal(),
             shipping: $this->getShipping(),
             taxes: $this->getTaxes(),
