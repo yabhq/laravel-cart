@@ -16,6 +16,6 @@ class ShippingLogistics implements ShippingLogisticsInterface
      */
     public static function getShippingCost(Checkout $checkout) : float
     {
-        return 5 * $checkout->getCart()->items()->count();
+        return 5 * $checkout->getModel()->items()->count();
     }
 }

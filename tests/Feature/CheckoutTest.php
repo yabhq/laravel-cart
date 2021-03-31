@@ -32,7 +32,7 @@ class CheckoutTest extends TestCase
         $this->assertTrue($checkout instanceof Checkout);
 
         $this->assertDatabaseHas('carts', [
-            'id' => $checkout->getCart()->id,
+            'id' => $checkout->getModel()->id,
         ]);
     }
 
@@ -48,7 +48,7 @@ class CheckoutTest extends TestCase
         $checkout = Checkout::findById($cart->id);
 
         $this->assertTrue($checkout instanceof Checkout);
-        $this->assertEquals($cart->id, $checkout->getCart()->id);
+        $this->assertEquals($cart->id, $checkout->getModel()->id);
     }
 
     /** @test */
@@ -71,9 +71,9 @@ class CheckoutTest extends TestCase
 
         $checkout = new Checkout($cart);
 
-        $this->assertTrue($checkout->getCartBuilder() instanceof Builder);
+        $this->assertTrue($checkout->getBuilder() instanceof Builder);
 
-        $this->assertEquals(1, $checkout->getCartBuilder()->count());
+        $this->assertEquals(1, $checkout->getBuilder()->count());
     }
 
     /** @test */
@@ -92,7 +92,7 @@ class CheckoutTest extends TestCase
         $item = $checkout->addItem($product, 1);
 
         $this->assertDatabaseHas('cart_items', [
-            'cart_id' => $checkout->getCart()->id,
+            'cart_id' => $checkout->getModel()->id,
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
@@ -118,7 +118,7 @@ class CheckoutTest extends TestCase
 
         $this->assertDatabaseHas('cart_items', [
             'id' => $item->id,
-            'cart_id' => $checkout->getCart()->id,
+            'cart_id' => $checkout->getModel()->id,
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,
@@ -138,7 +138,7 @@ class CheckoutTest extends TestCase
 
         $this->assertDatabaseHas('cart_items', [
             'id' => $item->id,
-            'cart_id' => $checkout->getCart()->id,
+            'cart_id' => $checkout->getModel()->id,
             'purchaseable_id' => $product->id,
             'purchaseable_type' => $product->getMorphClass(),
             'qty' => 1,

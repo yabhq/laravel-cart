@@ -21,7 +21,7 @@ class TaxLogistics implements TaxLogisticsInterface
         // $checkout->getSubtotal()
         // $checkout->getDiscount()
         // $checkout->getCustomField('shipping_address')
-        // $checkout->getCart()
+        // $checkout->getModel()
 
         return 0;
     }

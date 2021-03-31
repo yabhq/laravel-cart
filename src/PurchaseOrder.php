@@ -10,9 +10,9 @@ class PurchaseOrder
     /**
      * Create a new order instance for an order model.
      *
-     * @param \Yab\ShoppingCart\Models\Order $order
+     * @param \Yab\ShoppingCart\Models\Order $model
      */
-    public function __construct(protected Order $order)
+    public function __construct(protected Order $model)
     {
     }
 
@@ -45,9 +45,9 @@ class PurchaseOrder
      */
     public function destroy()
     {
-        $this->order->delete();
+        $this->model->delete();
 
-        unset($this->order);
+        unset($this->model);
     }
 
     /**
@@ -57,7 +57,7 @@ class PurchaseOrder
      */
     public function getModel() : Order
     {
-        return $this->order->fresh();
+        return $this->model->fresh();
     }
 
     /**
@@ -67,6 +67,6 @@ class PurchaseOrder
      */
     public function getBuilder() : Builder
     {
-        return Order::whereId($this->order->id);
+        return Order::whereId($this->model->id);
     }
 }

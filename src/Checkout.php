@@ -2,7 +2,6 @@
 
 namespace Yab\ShoppingCart;
 
-use Yab\ShoppingCart\Order;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use App\Logistics\OrderLogistics;
@@ -17,7 +16,6 @@ use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Contracts\PaymentProvider;
-use Yab\ShoppingCart\Models\Order as OrderModel;
 use Yab\ShoppingCart\Payments\LocalPaymentProvider;
 use Yab\ShoppingCart\Payments\FailedPaymentProvider;
 use Yab\ShoppingCart\Payments\StripePaymentProvider;
@@ -40,9 +38,9 @@ class Checkout
     /**
      * Create a new checkout instance for a cart.
      *
-     * @param \Yab\ShoppingCart\Models\Cart $cart
+     * @param \Yab\ShoppingCart\Models\Cart $model
      */
-    public function __construct(protected Cart $cart)
+    public function __construct(protected Cart $model)
     {
     }
 
@@ -81,9 +79,9 @@ class Checkout
      */
     public function destroy()
     {
-        $this->cart->delete();
+        $this->model->delete();
 
-        unset($this->cart);
+        unset($this->model);
     }
 
     /**
@@ -91,9 +89,9 @@ class Checkout
      *
      * @return \Yab\ShoppingCart\Models\Cart
      */
-    public function getCart() : Cart
+    public function getModel() : Cart
     {
-        return $this->cart->fresh();
+        return $this->model->fresh();
     }
 
     /**
@@ -101,9 +99,9 @@ class Checkout
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getCartBuilder() : Builder
+    public function getBuilder() : Builder
     {
-        return Cart::whereId($this->cart->id);
+        return Cart::whereId($this->model->id);
     }
 
     /**
@@ -130,10 +128,10 @@ class Checkout
     {
         $this->abortIfNotPurchaser($entity);
 
-        $this->cart->purchaser_id = $entity->getIdentifier();
-        $this->cart->purchaser_type = $entity->getType();
+        $this->model->purchaser_id = $entity->getIdentifier();
+        $this->model->purchaser_type = $entity->getType();
 
-        $this->cart->save();
+        $this->model->save();
     }
 
     /**
@@ -143,7 +141,7 @@ class Checkout
      */
     public function getPurchaser()
     {
-        return $this->cart->purchaser;
+        return $this->model->purchaser;
     }
 
     /**
@@ -162,7 +160,7 @@ class Checkout
         
         app(CartLogistics::class)->beforeCartItemAdded($this, $purchaseable, $qty);
 
-        $item = $this->cart->getItem($purchaseable);
+        $item = $this->model->getItem($purchaseable);
         $item->setQty($qty)->setOptions($options)->calculatePrice($price)->save();
         
         event(new CartItemAdded($item));
@@ -217,7 +215,7 @@ class Checkout
      */
     public function setCustomField(string $key, mixed $payload) : Checkout
     {
-        $this->cart->setCustomField($key, $payload);
+        $this->model->setCustomField($key, $payload);
 
         return $this;
     }
@@ -231,11 +229,11 @@ class Checkout
      */
     public function getCustomField(string $key) : mixed
     {
-        if (!$this->cart->custom_fields || !isset($this->cart->custom_fields[$key])) {
+        if (!$this->model->custom_fields || !isset($this->model->custom_fields[$key])) {
             return null;
         }
 
-        return $this->cart->custom_fields[$key];
+        return $this->model->custom_fields[$key];
     }
 
     /**
@@ -269,8 +267,8 @@ class Checkout
      */
     public function setDiscountAmount(float $amount) : Checkout
     {
-        $this->cart->discount_amount = $amount;
-        $this->cart->save();
+        $this->model->discount_amount = $amount;
+        $this->model->save();
 
         return $this;
     }
@@ -302,7 +300,7 @@ class Checkout
      */
     public function getSubtotal() : float
     {
-        return round($this->getCart()->items->sum('price') + $this->getShipping(), 2);
+        return round($this->getModel()->items->sum('price') + $this->getShipping(), 2);
     }
 
     /**
@@ -312,7 +310,7 @@ class Checkout
      */
     public function getDiscount() : float
     {
-        return $this->cart->discount_amount;
+        return $this->model->discount_amount;
     }
 
     /**
@@ -399,7 +397,7 @@ class Checkout
      */
     public function convertToOrder() : PurchaseOrder
     {
-        $order = PurchaseOrder::findById($this->getCart()->createOrder(
+        $order = PurchaseOrder::findById($this->getModel()->createOrder(
             subtotal: $this->getSubtotal(),
             shipping: $this->getShipping(),
             taxes: $this->getTaxes(),
@@ -421,8 +419,8 @@ class Checkout
      */
     private function setDiscountCode(string $code) : Checkout
     {
-        $this->cart->discount_code = $code;
-        $this->cart->save();
+        $this->model->discount_code = $code;
+        $this->model->save();
 
         return $this;
     }

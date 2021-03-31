@@ -51,8 +51,8 @@ First, simply implement the *Purchaseable* interface on your product (or other p
 
 **app/Models/Product.php**
 ```php
+use Yab\ShoppingCart\Traits\Purchaser;
 use Yab\ShoppingCart\Traits\Purchaseable;
-use Yab\ShoppingCart\Contracts\Purchaseable as PurchaseableInterface;
 
 class Product extends Model implements PurchaseableInterface
 {
@@ -64,8 +64,8 @@ Next we should implement the *Purchaser* interface on the model representing the
 
 **app/Models/Customer.php**
 ```php
-use Yab\ShoppingCart\Traits\Purchaser;
 use Yab\ShoppingCart\Contracts\Purchaser as PurchaserInterface;
+use Yab\ShoppingCart\Contracts\Purchaseable as PurchaseableInterface;
 
 class Customer extends Model implements PurchaserInterface
 {
@@ -152,10 +152,10 @@ Interacting with the underlying cart model and query builder:
 
 ```php
 // Yab\ShoppingCart\Models\Cart
-$checkout->getCart();
+$checkout->getModel();
 
 // Illuminate\Database\Eloquent\Builder
-$checkout->getCartBuilder();
+$checkout->getBuilder();
 ```
 
 Adding, updating or removing cart items:

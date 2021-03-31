@@ -19,7 +19,7 @@ class ShippingLogistics implements ShippingLogisticsInterface
         // Determine the taxes as needed. Possibly helpful methods:
         
         // $checkout->getCustomField('shipping_address')
-        // $checkout->getCart()
+        // $checkout->getModel()
 
         return 0;
     }

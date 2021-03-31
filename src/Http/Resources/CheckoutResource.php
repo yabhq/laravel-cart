@@ -17,7 +17,7 @@ class CheckoutResource extends JsonResource
     {
         $arr = [
             'subtotal' => $this->getSubtotal(),
-            'cart' => $this->getCart(),
+            'cart' => $this->getModel(),
         ];
 
         if ($this->hasInfoNeededToCalculateTotal()) {

@@ -26,7 +26,7 @@ class StripePaymentProvider implements PaymentProvider
             if ($response->status !== 'succeeded') {
                 throw new PaymentFailedException('The charge was not successful');
             }
-            $checkout->getCart()->saveReceipt($checkout, self::getReceipt($response));
+            $checkout->getModel()->saveReceipt($checkout, self::getReceipt($response));
         } catch (\Exception $e) {
             throw new PaymentFailedException($e->getMessage());
         }
