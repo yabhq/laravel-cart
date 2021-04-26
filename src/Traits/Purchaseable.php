@@ -37,4 +37,14 @@ trait Purchaseable
     {
         return $this->price;
     }
+
+    /**
+     * Get the display name of this purchaseable item.
+     *
+     * @return string
+     */
+    public function getDisplayName() : string
+    {
+        return $this->name;
+    }
 }
