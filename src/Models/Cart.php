@@ -53,7 +53,6 @@ class Cart extends Model
     protected $casts = [
         'discount_amount' => Money::class,
         'custom_fields' => 'array',
-        'receipt' => 'array',
     ];
 
     /**
@@ -105,31 +104,6 @@ class Cart extends Model
         $custom[$key] = $payload;
 
         $this->custom_fields = $custom;
-        $this->save();
-
-        return $this;
-    }
-
-    /**
-     * Save a payment receipt given the processor transaction ID.
-     *
-     * @param \Yab\ShoppingCart\Checkout $checkout
-     * @param array $providerReceipt
-     *
-     * @return \Yab\ShoppingCart\Models\Cart
-     */
-    public function saveReceipt(Checkout $checkout, array $providerReceipt) : Cart
-    {
-        $receipt = $this->receipt;
-
-        $receipt['subtotal'] = $checkout->getSubtotal();
-        $receipt['shipping'] = $checkout->getShipping();
-        $receipt['discount'] = $checkout->getDiscount();
-        $receipt['taxes'] = $checkout->getTaxes();
-        $receipt['total'] = $checkout->getTotal();
-        $receipt['provider'] = $providerReceipt;
-
-        $this->receipt = $receipt;
         $this->save();
 
         return $this;

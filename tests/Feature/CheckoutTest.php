@@ -16,7 +16,6 @@ use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Tests\Models\NonPurchaser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
-use Yab\ShoppingCart\Payments\StripePaymentProvider;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
@@ -302,40 +301,6 @@ class CheckoutTest extends TestCase
         // $105 x 0.18 = $18.90
         // $105 + $18.90 = $123.90
         $this->assertEquals(123.90, $checkout->getTotal());
-    }
-
-    /** @test */
-    public function the_payment_provider_can_be_set_for_the_checkout()
-    {
-        $cart = factory(Cart::class)->create();
-        $checkout = new Checkout($cart);
-
-        $checkout->setPaymentProvider('stripe');
-
-        $this->assertEquals(StripePaymentProvider::class, get_class($checkout->getPaymentProvider()));
-    }
-
-    /** @test */
-    public function a_receipt_is_saved_when_the_charge_is_processed()
-    {
-        $cart = factory(Cart::class)->create();
-        $checkout = new Checkout($cart);
-
-        $checkout->setPaymentProvider('local')->charge([ 'token' => 'test_123456' ]);
-
-        $this->assertDatabaseHas('carts', [
-            'id' => $cart->id,
-            'receipt' => json_encode([
-                'subtotal' => $checkout->getSubtotal(),
-                'shipping' => $checkout->getShipping(),
-                'discount' => $checkout->getDiscount(),
-                'taxes' => $checkout->getTaxes(),
-                'total' => $checkout->getTotal(),
-                'provider' => [
-                    'transaction_id' => 'transaction_123456',
-                ],
-            ]),
-        ]);
     }
 
     /** @test */
