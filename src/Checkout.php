@@ -14,17 +14,10 @@ use Yab\ShoppingCart\Events\CartItemAdded;
 use Yab\ShoppingCart\Contracts\Purchaseable;
 use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
-use Yab\ShoppingCart\Contracts\PaymentProvider;
-use Yab\ShoppingCart\Payments\LocalPaymentProvider;
-use Yab\ShoppingCart\Payments\FailedPaymentProvider;
-use Yab\ShoppingCart\Payments\StripePaymentProvider;
-use Yab\ShoppingCart\Exceptions\PaymentFailedException;
 use Yab\ShoppingCart\Exceptions\CheckoutNotFoundException;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
-use Yab\ShoppingCart\Exceptions\PaymentProviderInvalidException;
-use Yab\ShoppingCart\Exceptions\PaymentProviderMissingException;
 
 class Checkout
 {
@@ -334,63 +327,6 @@ class Checkout
     }
 
     /**
-     * Set the payment provider for this checkout.
-     *
-     * @param string $provider
-     *
-     * @return \Yab\ShoppingCart\Checkout
-     */
-    public function setPaymentProvider(string $provider) : Checkout
-    {
-        $supported = self::getSupportedPaymentProviders();
-        
-        $class = $supported[$provider] ?? $provider;
-
-        if(!class_exists($class) || !(new $class instanceof PaymentProvider)) {
-            throw new PaymentProviderInvalidException;
-        }
-
-        $this->paymentProvider = new $class;
-
-        return $this;
-    }
-
-    /**
-     * Get the payment provider for this checkout.
-     *
-     * @return \Yab\ShoppingCart\Contracts\PaymentProvider
-     */
-    public function getPaymentProvider() : PaymentProvider
-    {
-        return $this->paymentProvider;
-    }
-    
-    /**
-     * Perform the actual charge for this checkout.
-     *
-     * @param array $chargeable
-     * 
-     * @return void
-     */
-    public function charge(array $chargeable) : void
-    {
-        $this->abortIfMissingTotals();
-
-        if (is_null($this->paymentProvider)) {
-            $this->setPaymentProvider(config('checkout.provider'));
-        }
-
-        try {
-            $this->paymentProvider->charge($this, $chargeable);
-            app(CartLogistics::class)->afterSuccessfulCheckout($this);
-        }
-        catch(PaymentFailedException $e) {
-            app(CartLogistics::class)->afterFailedCheckout($this, $e);
-            throw $e;
-        }
-    }
-
-    /**
      * Manually tag this checkout with a discount code.
      *
      * @param string $code
@@ -437,34 +373,5 @@ class Checkout
         if (!($purchaser instanceof Purchaser)) {
             throw new PurchaserInvalidException;
         }
-    }
-
-    /**
-     * Throw an exception if the checkout is missing info needed to
-     * calculate totals.
-     *
-     * @throws \Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException
-     *
-     * @return void
-     */
-    private function abortIfMissingTotals()
-    {
-        if (!$this->hasInfoNeededToCalculateTotal()) {
-            throw new CheckoutMissingInfoException;
-        }
-    }
-
-    /**
-     * Return a mapping of the supported payment providers.
-     * 
-     * @return array
-     */
-    private static function getSupportedPaymentProviders() : array
-    {
-        return [
-            'local' => LocalPaymentProvider::class,
-            'failed' => FailedPaymentProvider::class,
-            'stripe' => StripePaymentProvider::class,
-        ];
     }
 }

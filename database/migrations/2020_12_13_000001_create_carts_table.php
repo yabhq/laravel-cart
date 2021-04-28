@@ -19,7 +19,6 @@ class CreateCartsTable extends Migration
             $table->string('discount_code')->nullable();
             $table->integer('discount_amount')->default(0);
             $table->json('custom_fields')->nullable();
-            $table->json('receipt')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -3,7 +3,7 @@
 
 # Laravel Shopping Cart API
 
-A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind. Currently supports payment processing with **Stripe**.
+A simple yet customizable Laravel shopping cart API. Provides RESTful API endpoints out of the box to help with your next e-commerce build. Designed specifically with single page application (SPA) requirements in mind.
 
 Works best with [cart.js](https://github.com/yabhq/cart.js) for front-end integration.
 
@@ -95,7 +95,6 @@ PUT /checkouts/{checkout}/items/{item}
 DELETE /checkouts/{checkout}/items/{item}
 
 POST /checkouts/{checkout}/discount
-POST /checkouts/{checkout}/stripe
 ```
 
 Not every e-commerce store is the same. This package provides several "logistics" classes which allow you to hook into the core package logic and perform some common customizations. For example, you may specify how the tax, shipping and discount amounts are determined:
@@ -120,8 +119,6 @@ public static function getDiscountFromCode(Checkout $checkout, string $code) : f
 public static function getPurchaseable(string $type, mixed $id) : mixed
 public static function beforeCartItemAdded(Checkout $checkout, mixed $purchaseable, int $qty) : void
 public static function hasInfoNeededToCalculateTotal(Checkout $checkout) : bool
-public static function afterSuccessfulCheckout(Checkout $checkout) : void
-public static function afterFailedCheckout(Checkout $checkout, PaymentFailedException $e) : void
 ```
 
 ## The Checkout Class
@@ -194,12 +191,6 @@ $checkout->getSubtotal(); // 110.00
 $checkout->getDiscount(); // 10.00
 $checkout->getTaxes(); // 13.00
 $checkout->getTotal(); // 113.00
-```
-
-Performing charges (currently supports Stripe):
-
-```php
-$checkout->setPaymentProvider('stripe')->charge([ 'token' => ... ]);
 ```
 
 ## License
