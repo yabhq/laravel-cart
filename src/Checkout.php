@@ -2,6 +2,8 @@
 
 namespace Yab\ShoppingCart;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Logistics\TaxLogistics;
 use App\Logistics\CartLogistics;
 use Yab\ShoppingCart\Models\Cart;
@@ -222,11 +224,16 @@ class Checkout
      */
     public function getCustomField(string $key) : mixed
     {
-        if (!$this->cart->custom_fields || !isset($this->cart->custom_fields[$key])) {
+        if (!$this->cart->custom_fields) {
             return null;
         }
 
-        return $this->cart->custom_fields[$key];
+        if (Str::contains($key, '.')) {
+            $flattened = Arr::dot($this->cart->custom_fields);
+            return isset($flattened[$key]) ? $flattened[$key] : null;
+        }
+
+        return isset($this->cart->custom_fields[$key]) ? $this->cart->custom_fields[$key] : null;
     }
 
     /**
