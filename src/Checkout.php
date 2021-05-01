@@ -310,7 +310,7 @@ class Checkout
      */
     public function getDiscount() : float
     {
-        return $this->cart->discount_amount;
+        return floatval($this->cart->discount_amount);
     }
 
     /**
