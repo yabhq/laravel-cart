@@ -133,6 +133,12 @@ $checkout = Checkout::create();
 $checkout = Checkout::findById('uuid-123');
 ```
 
+Getting the ID of an existing checkout:
+
+```php
+$checkout->id();
+```
+
 Adding a custom field for a checkout:
 
 ```php
