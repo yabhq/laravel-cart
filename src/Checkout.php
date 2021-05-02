@@ -18,18 +18,10 @@ use Yab\ShoppingCart\Events\CartItemDeleted;
 use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Exceptions\CheckoutNotFoundException;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
-use Yab\ShoppingCart\Exceptions\CheckoutMissingInfoException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
 class Checkout
 {
-    /**
-     * The payment provider class to use for charges.
-     *
-     * @var mixed
-     */
-    private $paymentProvider;
-
     /**
      * Create a new checkout instance for a cart.
      *
@@ -65,6 +57,16 @@ class Checkout
     public static function create() : Checkout
     {
         return new Checkout(Cart::create());
+    }
+
+    /**
+     * Get the UUID for this checkout.
+     *
+     * @return string
+     */
+    public function id() : string
+    {
+        return $this->getCart()->id;
     }
 
     /**
