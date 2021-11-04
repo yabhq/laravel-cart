@@ -35,15 +35,16 @@ class Checkout
      * Find a checkout by an existing ID.
      *
      * @param string $checkoutId
+     * @param bool $withTrashed
      *
      * @return \Yab\ShoppingCart\Checkout
      */
-    public static function findById(string $checkoutId) : Checkout
+    public static function findById(string $checkoutId, bool $withTrashed = false) : Checkout
     {
-        $checkout = Cart::find($checkoutId);
+        $checkout = $withTrashed ? Cart::withTrashed()->find($checkoutId) : Cart::find($checkoutId);
 
-        if (!$checkout) {
-            throw new CheckoutNotFoundException;
+        if (! $checkout) {
+            throw new CheckoutNotFoundException();
         }
 
         return new Checkout($checkout);
