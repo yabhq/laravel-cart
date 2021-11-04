@@ -16,6 +16,7 @@ use Yab\ShoppingCart\Events\CartItemUpdated;
 use Yab\ShoppingCart\Tests\Models\NonPurchaser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Yab\ShoppingCart\Tests\Models\NonPurchaseable;
+use Yab\ShoppingCart\Exceptions\CheckoutNotFoundException;
 use Yab\ShoppingCart\Exceptions\PurchaserInvalidException;
 use Yab\ShoppingCart\Exceptions\ItemNotPurchaseableException;
 
@@ -45,6 +46,27 @@ class CheckoutTest extends TestCase
         ]);
 
         $checkout = Checkout::findById($cart->id);
+
+        $this->assertTrue($checkout instanceof Checkout);
+        $this->assertEquals($cart->id, $checkout->getCart()->id);
+    }
+
+    /** @test */
+    public function a_deleted_checkout_can_be_retrieved_by_the_cart_id()
+    {
+        $cart = factory(Cart::class)->create();
+        $cart->delete();
+
+        $this->assertSoftDeleted('carts', [
+            'id' => $cart->id,
+        ]);
+
+        $this->expectException(CheckoutNotFoundException::class);
+
+        $checkout = Checkout::findById($cart->id);
+
+        // Try again withTrashed set to true
+        $checkout = Checkout::findById($cart->id, true);
 
         $this->assertTrue($checkout instanceof Checkout);
         $this->assertEquals($cart->id, $checkout->getCart()->id);
