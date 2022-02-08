@@ -1,7 +1,7 @@
 {
     "name": "yabhq/laravel-cart",
-    "description": "Shopping cart API powered by Laravel",
-    "keywords": ["laravel", "cart", "shoppingcart"],
+    "description": "Simple yet customizable Laravel shopping cart",
+    "keywords": ["laravel", "cart", "shopping", "shopping cart"],
     "homepage": "https://github.com/yabhq/laravel-cart",
     "license": "MIT",
     "type": "library",
