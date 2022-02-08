@@ -9,12 +9,12 @@ Provides RESTful API endpoints out of the box to help with front-end / SPA integ
 
 ## Table of Contents
 
-[Requirements](#requirements)
-[Installation](#installation)
-[Usage](#usage)
-[The Checkout Class](#the-checkout-class)
+[Requirements](#requirements)  
+[Installation](#installation)  
+[Usage](#usage) 
+[The Checkout Class](#the-checkout-class)  
 [Customization](#customization)  
-[License](#license)
+[License](#license)  
 
 ## Requirements
 
