@@ -18,7 +18,7 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": "^8.0",
-        "yabhq/laravel-mint": "0.*"
+        "yabhq/laravel-mint": "^1.0.2"
     },
     "require-dev": {
         "laravel/legacy-factories": "^1.0.4",
